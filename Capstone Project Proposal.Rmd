@@ -2,6 +2,10 @@
 title: "Capstone Project Proposal: Evaluation of NHL Game Statistics to Predict Team Performance"
 output: html_document
 ---
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
 
 ##Hockey and the Potential Impact of Data Science  
 
