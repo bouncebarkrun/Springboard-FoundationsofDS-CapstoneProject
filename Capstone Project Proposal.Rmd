@@ -1,11 +1,9 @@
 ---
 title: "Capstone Project Proposal: Evaluation of NHL Game Statistics to Predict Team Performance"
 author: "Molly McNamara"
-output: github_document
+output: html_document:
+    keep_md: true
 ---
-```{r}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
-```
 
 
 ##Hockey and the Potential Impact of Data Science  
