@@ -1,6 +1,6 @@
 ---
 title: "Capstone Project Proposal: Evaluation of NHL Game Statistics to Predict Team Performance"
-output: html_document
+output: github_document
 ---
 
 
