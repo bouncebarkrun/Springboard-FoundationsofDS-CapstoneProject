@@ -1,17 +1,20 @@
 ---
 title: "Capstone Project Proposal: Evaluation of NHL Game Statistics to Predict Team Performance"
-output: pdf_document
+output: html_document
 ---
 
 ####Hockey and the Potential Impact of Data Science  
+
 The National Hockey League (NHL) is considered to be one of the four major professional sports leagues in the United States (though ranked behind baseball, football and basketball).  The NHL is a binational entity split between the US and Canada, where hockey is by far the most popular sport.  The economics of hockey are complicated by the shared border and exchange rates, but team success ultimately drives financial success for the team and the league.  Teams see an impact of improved performance and win totals on season ticket sales and sponsorship revenue.   
  
 Establishing the right balance of player skills and team needs to make a successful run at the playoffs is the challenge of every NHL general manager (GM). While in-game coaching decisions are left to the coaching staff, the GM is responsible for acquiring and dismissing players as well as the coach. A skilled GM evaluates the existing team members and identifies gaps or needs in order to find and obtain talent that will support and improve the team as a  whole.  Better analysis of player and league data can help guide a GM in improved decision making when acquiring team talent, hopefully resulting in a more successful team.     
 
 ####The Data  
+
 Project data will consist of NHL player, team and coaching statistics for years 2000-2017 and NHL draft data from the late 1980s through 2016.  These datasets include player names, ages and birthdates, countries of origin, positions played, scoring and defensive statistics by year, junior level teams and leagues played in, coaching records, and more.  The information is gathered from several sources and in several separate files and will take some wrangling to assemble into final analysis form.    
 
 ####Potential Analysis Strategies:   
+
 I propose to evaluate NHL data from ~2000-2012 to build a model that determines what factors predict which teams will make the playoffs and succeed through multiple rounds. This model would then be tested on 2013-2017 season data to evaluate performance.    
  
 I propose to evaluate NHL player data from ~2000-2017, as well as player draft data, and determine how well draft position actually predicts future performance.  In the case of underrated and overrated players, determined by draft position and best 3 years of career performance, is future performance predictable by amateur team, amateur league, nationality, or position played?  
@@ -21,4 +24,5 @@ I propose to evaluate NHL data on coaches to determine if performance as a playe
 Several different modeling approaches may be appropriate as this data is explored more and several hockey-specific statistics may be calculated to be included in the model; the final strategy will be determined as additional coursework is completed and the data is cleaned.  
 
 ####Deliverables  
+
 After analysis of the data, the code used to develop the models will be shared.  A formal report will be developed detailing the results of the exploratory data analysis, the statistical analysis and the results of the modeling and this information will also be captured at a high level in a slidedeck.  The end goal would be to have a set of most relevant player statistics and/or features to show a team GM what to consider when evaluating new talent.  
