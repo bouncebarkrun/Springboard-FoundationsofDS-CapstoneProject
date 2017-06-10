@@ -16,7 +16,7 @@ Establishing the right balance of player skills and team needs to make a success
 Project data will consist of NHL player, team and coaching statistics for years 2000-2017 and NHL draft data from the late 1980s through 2016.  These datasets include player names, ages and birthdates, countries of origin, positions played, scoring and defensive statistics by year, junior level teams and leagues played in, coaching records, and more.  The information is gathered from several sources and in several separate files and will take some wrangling to assemble into final analysis form.    
 
 **Potential Analysis Strategies:**     
-
+(may only use 1-2 of these)
 I propose to evaluate NHL data from ~2000-2012 to build a model that determines what factors predict which teams will make the playoffs and succeed through multiple rounds. This model would then be tested on 2013-2017 season data to evaluate performance.    
  
 I propose to evaluate NHL player data from ~2000-2017, as well as player draft data, and determine how well draft position actually predicts future performance.  In the case of underrated and overrated players, determined by draft position and best 3 years of career performance, is future performance predictable by amateur team, amateur league, nationality, or position played?  
