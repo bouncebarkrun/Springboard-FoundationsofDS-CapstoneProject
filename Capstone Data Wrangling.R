@@ -26,7 +26,7 @@ colnames(Scoring) <- c("Player_ID", "Season", "Stint", "Team_ID", "League_ID", "
 colnames(Draft) <- c("Draft_Pick", "Draft_Year", "Draft_Team", "Player", "Draft_Age", "LastYearPlayed", "Amateur_Team")
 colnames(Teams) <- c("Year", "League_ID", "Team_ID", "FranchiseID", "Conference_ID", "Division_ID", "SeasonEnd_Rank", "Playoff_Result", "Team_Total_Games", "Team_Wins", "Team_Losses", "Team_Ties", "Team_OT_Losses", "Team_Points", "Team_ShootoutWins", "Team_ShootoutLosses", "Team_GoalsFor", "Team_GoalsAgainst", "TeamName", "Team_PenaltyMin", "Team_BenchMinors", "Team_PPG", "Team_PPC", "Team_SHA", "Team_PKG", "Team_PKC", "Team_SHF")
 
-#Separate player name and ihdbID from each other in Draft database
+#Separate player name and Player_ID from each other in Draft database
 Draft <- separate(Draft, Player, into = c("Player", "Player_ID"), sep = "/")
 
 #Join datasets
