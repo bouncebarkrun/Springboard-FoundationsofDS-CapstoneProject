@@ -12,23 +12,19 @@ library("tidyr")
 Master <- read_csv("~/Desktop/Master.csv")
 Scoring <- read_csv("~/Desktop/Scoring.csv")
 Draft <- read_csv("~/Desktop/DraftData.csv")
+Teams <- read_csv("~/Desktop/Teams.csv")
 
-#Convert datasets to a tbl class for easier manipulation
+#Convert datasets to a tbl class for easier viewing
 tbl_df(Master)
 tbl_df(Scoring)
 tbl_df(Draft)
-
-#Look at structure of files
-glimpse(Master)
-# Master consists of 7761 observations of 31 variables. As this dataset includes basic demographic information for every player in the NHL from 1909 to 2011, this makes sense.
-glimpse(Scoring)
-# Scoring consists of 45,967 observations of 31 variables. As this dataset captures year-by-year scoring for each NHL player in the dataset, it is understandable that there are more observations that the number of players who make up the Master dataset.
-glimpse(Draft)
+tbl_df(Teams)
 
 #Start cleaning up column names to be more easily understood
-colnames(Master) <- c("Player_ID", "Coach_ID", "HallFame_ID", "First_Name", "Last_Name", "Name_Notes", "Given_Name", "Nickname", "Height", "Weight", "Shooting_Hand", "legendsID", "ihdbID", "hrefID", "FirstNHLseason", "LastNHLseason", "FirstWHAseason", "LastWHAseason", "Position_PLayed", "Birth_Year", "Birth_Month", "Birth_Day", "Birth_Country", "Birth_State", "Birth_City", "Death_Year", "Death_Month", "Death_Day", "Death_Country", "Death_State", "Death_City")
-colnames(Scoring) <- c("Player_ID", "Season", "Stint", "Team_ID", "League_ID", "Position_Played", "Games_Played", "Goals", "Assists", "Points", "Penalty_Minutes", "Plus_Minus", "PP_Goals", "PP_Assists", "SH_Goals", "SH_Assists", "Gamewinning_Goals", "GameTying_Goals", "Shots", "PS_Games", "PS_Goals", "PS_Assists", "PS_Points", "PS_PenaltyMin", "PS_PlusMinus", "PS_PowerplayG", "PS_PowerplayA", "PS_ShorthandedG", "PS_ShorthandedA", "PS_GamewinningG", "PS_Shots")
-colnames(Draft) <- c("Draft_Pick", "Draft_Year", "Team_Name", "Player", "Draft_Age", "LastYearPlayed", "Amateur_Team")
+colnames(Master) <- c("Player_ID", "Coach_ID", "HallFame_ID", "First_Name", "Last_Name", "Name_Notes", "Given_Name", "Nickname", "Height", "Weight", "Shooting_Hand", "legendsID", "ihdbID", "hrefID", "FirstNHLseason", "LastNHLseason", "FirstWHAseason", "LastWHAseason", "Position_Played", "Birth_Year", "Birth_Month", "Birth_Day", "Birth_Country", "Birth_State", "Birth_City", "Death_Year", "Death_Month", "Death_Day", "Death_Country", "Death_State", "Death_City")
+colnames(Scoring) <- c("Player_ID", "Season", "Stint", "Team_ID", "League_ID", "Position", "Games_Played", "Goals", "Assists", "Points", "Penalty_Minutes", "Plus_Minus", "PP_Goals", "PP_Assists", "SH_Goals", "SH_Assists", "Gamewinning_Goals", "GameTying_Goals", "Shots", "PS_Games", "PS_Goals", "PS_Assists", "PS_Points", "PS_PenaltyMin", "PS_PlusMinus", "PS_PowerplayG", "PS_PowerplayA", "PS_ShorthandedG", "PS_ShorthandedA", "PS_GamewinningG", "PS_Shots")
+colnames(Draft) <- c("Draft_Pick", "Draft_Year", "Draft_Team", "Player", "Draft_Age", "LastYearPlayed", "Amateur_Team")
+colnames(Teams) <- c("Year", "League_ID", "Team_ID", "FranchiseID", "Conference_ID", "Division_ID", "SeasonEnd_Rank", "Playoff_Result", "Team_Total_Games", "Team_Wins", "Team_Losses", "Team_Ties", "Team_OT_Losses", "Team_Points", "Team_ShootoutWins", "Team_ShootoutLosses", "Team_GoalsFor", "Team_GoalsAgainst", "TeamName", "Team_PenaltyMin", "Team_BenchMinors", "Team_PPG", "Team_PPC", "Team_SHA", "Team_PKG", "Team_PKC", "Team_SHF")
 
 #Separate player name and ihdbID from each other in Draft database
 Draft <- separate(Draft, Player, into = c("Player", "Player_ID"), sep = "/")
@@ -38,21 +34,24 @@ MergedData <- merge(Master, Scoring, by = "Player_ID")
 AllData <- merge(MergedData, Draft, by = "Player_ID")
 
 #Remove some unnecessary columns
-FilteredData <- select(AllData, -Player, -ihdbID, -Coach_ID, -HallFame_ID, -Name_Notes, -Given_Name, -Nickname, -legendsID, -hrefID, -FirstWHAseason, -LastWHAseason, -LastYearPlayed)
+PlayerFilter <- select(AllData, -Position, -Player, -ihdbID, -League_ID, -Coach_ID, -HallFame_ID, -Name_Notes, -Given_Name, -Nickname, -legendsID, -hrefID, -FirstWHAseason, -LastWHAseason, -LastYearPlayed)
+TeamFilter <- select(Teams, -League_ID, -FranchiseID)
 
 #Subset the dataset to the period of interest (the 2000-2011 seasons)
-PlayerData <- subset(FilteredData, Season >= 2000)
+PlayerData <- subset(PlayerFilter, Season >= 2000)
+TeamData <- subset(TeamFilter, Year >= 2000)
 
-#Start some cleanup
-PlayerData$Position_Played <- as.factor(PlayerData$Position_Played)
-PlayerData$Team_ID <- as.factor(PlayerData$Team_ID)
-PlayerData$Birth_Country <- as.factor(PlayerData$Birth_Country)
+#Convert multiple fields to factors and integers
+playercols <- c("Position_Played", "Team_ID", "Birth_Country", "Birth_City", "Birth_State", "Death_Country", "Death_City", "Death_State", "Shooting_Hand", "Draft_Team", "Amateur_Team")
+PlayerData[playercols] <- lapply(PlayerData[playercols], factor)
+teamfactor <- c("Team_ID", "Conference_ID", "Division_ID", "Playoff_Result", "TeamName")
+TeamData[teamfactor] <- lapply(TeamData[teamfactor], factor)
+teamnum <- c("Team_OT_Losses", "TeamShootoutWins", "Team_ShootoutLosses")
+TeamData[teamnum] <- lapply(TeamData[teamnum], as.numeric)
 
-#Look at new dataset
-head(PlayerData)
-str(PlayerData)
-class(PlayerData) 
+#Look at new datasets
 summary(PlayerData)
+summary(TeamData)
 
 #Assess NA values
 is.na(PlayerData)
