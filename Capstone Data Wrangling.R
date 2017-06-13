@@ -2,17 +2,19 @@
 install.packages("dplyr")
 install.packages("readr")
 install.packages("tidyr")
+install.packages("rmarkdown")
 
 #Load data packages
 library("dplyr")
 library("readr")
 library("tidyr")
+library("rmarkdown")
 
 #Import data sets
-Master <- read_csv("~/Desktop/Master.csv")
-Scoring <- read_csv("~/Desktop/Scoring.csv")
-Draft <- read_csv("~/Desktop/DraftData.csv")
-Teams <- read_csv("~/Desktop/Teams.csv")
+Master <- read_csv("C:/Users/mmcnamara/Desktop/Master.csv")
+Scoring <- read_csv("C:/Users/mmcnamara/Desktop/Scoring.csv")
+Draft <- read_csv("C:/Users/mmcnamara/Desktop/DraftData.csv")
+Teams <- read_csv("C:/Users/mmcnamara/Desktop/Teams.csv")
 
 #Convert datasets to a tbl class for easier viewing
 tbl_df(Master)
@@ -57,20 +59,17 @@ summary(TeamData)
 is.na(PlayerData)
 is.na(TeamData)
 #NAs in certain fields are acceptable as they aren't applicable to some players: death statistics (many players haven't died as yet)
-#Need to investigate further NA values in Birth_State.
 #Scoring statistics are NA where players or teams did not contribute to these stats during a season. These will be replaced with a 0.
-#Converting the NAs in playoff results to DNQ (Did Not Quality)
 NAcols <- c("Games_Played", "Goals", "Assists", "Points", "Penalty_Minutes", "Plus_Minus", "PP_Goals", "PP_Assists", "SH_Goals", "SH_Assists", "Gamewinning_Goals", "GameTying_Goals", "Shots", "PS_Games", "PS_Goals", "PS_Assists", "PS_Points", "PS_PenaltyMin", "PS_PlusMinus", "PS_PowerplayG", "PS_PowerplayA", "PS_ShorthandedG", "PS_ShorthandedA", "PS_GamewinningG", "PS_Shots")
 PlayerData[NAcols][is.na(PlayerData[NAcols])] <- 0
 NAteam <- c("Team_Ties", "Team_ShootoutWins", "Team_ShootoutLosses")
 TeamData[NAteam][is.na(TeamData[NAteam])] <- 0
-NA_Playoffresult <- c("Playoff_Result")
-TeamData[NA_Playoffresult][is.na(TeamData[NA_Playoffresult])] <- DNQ
+
 
 #Look at the final cleaned up datasets
 summary(PlayerData)
-Summary(TeamData)
+summary(TeamData)
 
 #Save the cleaned up datasets
-write.csv(PlayerData, file = "~/Desktop/PlayerData_clean.csv")
-write.csv(TeamData, file = "~/Desktop/TeamData_clean.csv")
+write.csv(PlayerData, file = "C:/Users/mmcnamara/Desktop/PlayerData_clean.csv")
+write.csv(TeamData, file = "C:/Users/mmcnamara/Desktop/TeamData_clean.csv")
