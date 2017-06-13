@@ -72,4 +72,5 @@ summary(PlayerData)
 Summary(TeamData)
 
 #Save the cleaned up datasets
-
+write.csv(PlayerData, file = "~/Desktop/PlayerData_clean.csv")
+write.csv(TeamData, file = "~/Desktop/TeamData_clean.csv")
