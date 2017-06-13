@@ -46,7 +46,7 @@ playercols <- c("Position_Played", "Team_ID", "Birth_Country", "Birth_City", "Bi
 PlayerData[playercols] <- lapply(PlayerData[playercols], factor)
 teamfactor <- c("Team_ID", "Conference_ID", "Division_ID", "Playoff_Result", "TeamName")
 TeamData[teamfactor] <- lapply(TeamData[teamfactor], factor)
-teamnum <- c("Team_OT_Losses", "TeamShootoutWins", "Team_ShootoutLosses")
+teamnum <- c("Team_OT_Losses", "Team_ShootoutWins", "Team_ShootoutLosses")
 TeamData[teamnum] <- lapply(TeamData[teamnum], as.numeric)
 
 #Look at new datasets
@@ -55,8 +55,21 @@ summary(TeamData)
 
 #Assess NA values
 is.na(PlayerData)
+is.na(TeamData)
 #NAs in certain fields are acceptable as they aren't applicable to some players: death statistics (many players haven't died as yet)
 #Need to investigate further NA values in Birth_State.
-#Scoring statistics are NA where players did not contribute to these stats during a season. Will replace them with 0.
+#Scoring statistics are NA where players or teams did not contribute to these stats during a season. These will be replaced with a 0.
+#Converting the NAs in playoff results to DNQ (Did Not Quality)
+NAcols <- c("Games_Played", "Goals", "Assists", "Points", "Penalty_Minutes", "Plus_Minus", "PP_Goals", "PP_Assists", "SH_Goals", "SH_Assists", "Gamewinning_Goals", "GameTying_Goals", "Shots", "PS_Games", "PS_Goals", "PS_Assists", "PS_Points", "PS_PenaltyMin", "PS_PlusMinus", "PS_PowerplayG", "PS_PowerplayA", "PS_ShorthandedG", "PS_ShorthandedA", "PS_GamewinningG", "PS_Shots")
+PlayerData[NAcols][is.na(PlayerData[NAcols])] <- 0
+NAteam <- c("Team_Ties", "Team_ShootoutWins", "Team_ShootoutLosses")
+TeamData[NAteam][is.na(TeamData[NAteam])] <- 0
+NA_Playoffresult <- c("Playoff_Result")
+TeamData[NA_Playoffresult][is.na(TeamData[NA_Playoffresult])] <- DNQ
 
+#Look at the final cleaned up datasets
+summary(PlayerData)
+Summary(TeamData)
+
+#Save the cleaned up datasets
 
