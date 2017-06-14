@@ -23,7 +23,7 @@ Columns for all 4 datasets were renamed to understand the variables more easily.
 
 The Master, Scoring and Draft datasets were then merged by Player_ID into one dataset (AllData). 
 
-Unnecessary or duplicative variables were removed from AllData and Teams. Multiple fields were converted to factors or integers as appropriate. The datasets were subset to the years 2000 to 2011 under the new names PlayerData and TeamData.  At this point, PlayerData consisted of 10,342 observations of 54 variables and TeamData consisted of 330 observations of 25 variables.
+Unnecessary or duplicative variables were removed from AllData and Teams. Multiple fields were converted to factors or integers as appropriate. Birth and death month/day/year columns were joined into a single date column for each event. The datasets were subset to the years 2000 to 2011 under the new names PlayerData and TeamData.  At this point, PlayerData consisted of 10,342 observations of 54 variables and TeamData consisted of 330 observations of 25 variables.
 
 The two datasets were evaluated with the summary() command to assess the presence of any obvious outliers. NA values in both sets were identified. In the case of certain variables, such as death statistics, NA is appropriate as most of the players in the subset timeframe had not yet died. Scoring statistics that displayed NA incorrectly (for example, a player did not score any goals in a given year) were replaced with a 0.
 
