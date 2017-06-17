@@ -22,7 +22,7 @@ tbl_df(Teams)
 
 #Start cleaning up column names to be more easily understood
 colnames(Master) <- c("Player_ID", "Coach_ID", "HallFame_ID", "First_Name", "Last_Name", "Name_Notes", "Given_Name", "Nickname", "Height", "Weight", "Shooting_Hand", "legendsID", "ihdbID", "hrefID", "FirstNHLseason", "LastNHLseason", "FirstWHAseason", "LastWHAseason", "Position_Played", "Birth_Year", "Birth_Month", "Birth_Day", "Birth_Country", "Birth_State", "Birth_City", "Death_Year", "Death_Month", "Death_Day", "Death_Country", "Death_State", "Death_City")
-colnames(Scoring) <- c("Player_ID", "Season", "Stint", "Team_ID", "League_ID", "Position", "Games_Played", "Goals", "Assists", "Points", "Penalty_Minutes", "Plus_Minus", "PP_Goals", "PP_Assists", "SH_Goals", "SH_Assists", "Gamewinning_Goals", "GameTying_Goals", "Shots", "PS_Games", "PS_Goals", "PS_Assists", "PS_Points", "PS_PenaltyMin", "PS_PlusMinus", "PS_PowerplayG", "PS_PowerplayA", "PS_ShorthandedG", "PS_ShorthandedA", "PS_GamewinningG", "PS_Shots")
+colnames(Scoring) <- c("Player_ID", "Year", "Stint", "Team_ID", "League_ID", "Position", "Games_Played", "Goals", "Assists", "Points", "Penalty_Minutes", "Plus_Minus", "PP_Goals", "PP_Assists", "SH_Goals", "SH_Assists", "Gamewinning_Goals", "GameTying_Goals", "Shots", "PS_Games", "PS_Goals", "PS_Assists", "PS_Points", "PS_PenaltyMin", "PS_PlusMinus", "PS_PowerplayG", "PS_PowerplayA", "PS_ShorthandedG", "PS_ShorthandedA", "PS_GamewinningG", "PS_Shots")
 colnames(Draft) <- c("Draft_Pick", "Draft_Year", "Draft_Team", "Player", "Draft_Age", "LastYearPlayed", "Amateur_Team")
 colnames(Teams) <- c("Year", "League_ID", "Team_ID", "FranchiseID", "Conference_ID", "Division_ID", "SeasonEnd_Rank", "Playoff_Result", "Team_Total_Games", "Team_Wins", "Team_Losses", "Team_Ties", "Team_OT_Losses", "Team_Points", "Team_ShootoutWins", "Team_ShootoutLosses", "Team_GoalsFor", "Team_GoalsAgainst", "TeamName", "Team_PenaltyMin", "Team_BenchMinors", "Team_PPG", "Team_PPC", "Team_SHA", "Team_PKG", "Team_PKC", "Team_SHF")
 
@@ -38,7 +38,7 @@ AllData$BirthDate <- as.Date(with(AllData, paste(Birth_Year, Birth_Month, Birth_
 AllData$DeathDate <- as.Date(with(AllData, paste(Death_Year, Death_Month, Death_Day, sep="-")), "%Y-%m-%d")
 
 #Subset the dataset to the period of interest (the 2000-2011 seasons)
-PlayerSubset <- subset(AllData, Season >= 2000)
+PlayerSubset <- subset(AllData, Year >= 2000)
 TeamSubset <- subset(Teams, Year >= 2000)
 
 #Remove some unnecessary columns
@@ -77,6 +77,9 @@ TeamData[PlayoffRes][is.na(TeamData[PlayoffRes])] <- 0
 summary(PlayerData)
 summary(TeamData)
 
+#Merge the cleaned datasets by year and team
+FinalData <- merge(PlayerData, TeamData, by=c("Team_ID", "Year"))
+
 #Save the cleaned up datasets
-write.csv(PlayerData, file = "~/Desktop/PlayerData_clean.csv")
-write.csv(TeamData, file = "~/Desktop/TeamData_clean.csv")
+write.csv(FinalData, file = "~/Desktop/FinalData_clean.csv")
+
