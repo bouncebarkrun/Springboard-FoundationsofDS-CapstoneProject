@@ -68,6 +68,11 @@ PlayerData[NAcols][is.na(PlayerData[NAcols])] <- 0
 NAteam <- c("Team_Ties", "Team_ShootoutWins", "Team_ShootoutLosses")
 TeamData[NAteam][is.na(TeamData[NAteam])] <- 0
 
+#Add a Playoff column to capture if teams made the playoffs with a simple 0 or 1
+TeamData <- mutate(TeamData, Playoffs = as.numeric(TeamData$Playoff_Result != "NA"))
+PlayoffRes <- c("Playoffs")
+TeamData[PlayoffRes][is.na(TeamData[PlayoffRes])] <- 0
+
 #Look at the final cleaned up datasets
 summary(PlayerData)
 summary(TeamData)
