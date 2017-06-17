@@ -27,6 +27,8 @@ Unnecessary or duplicative variables were removed from AllData and Teams. Multip
 
 The two datasets were evaluated with the summary() command to assess the presence of any obvious outliers. NA values in both sets were identified. In the case of certain variables, such as death statistics, NA is appropriate as most of the players in the subset timeframe had not yet died. Scoring statistics that displayed NA incorrectly (for example, a player did not score any goals in a given year) were replaced with a 0.
 
+A new variable was created for playoff success in the Team and coded as 1 for the team making playoffs that year and 0 for not making the playoffs.
+
 At this point, the new cleaned data files were written and saved as CSV files.
 
 The R code used to perform this data wrangling can be found here: [link](https://github.com/bouncebarkrun/SpringboardCapstoneProject/blob/master/Capstone%20Data%20Wrangling.R)
