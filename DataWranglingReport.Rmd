@@ -29,7 +29,9 @@ The two datasets were evaluated with the summary() command to assess the presenc
 
 A new variable was created for playoff success in the Team and coded as 1 for the team making playoffs that year and 0 for not making the playoffs.
 
-At this point, the new cleaned data files were written and saved as CSV files.
+The cleaned datasets were merged by year and team so that all of the data now resides in one file.
+
+At this point, the new cleaned data file was written and saved as CSV file.
 
 The R code used to perform this data wrangling can be found here: [link](https://github.com/bouncebarkrun/SpringboardCapstoneProject/blob/master/Capstone%20Data%20Wrangling.R)
 
