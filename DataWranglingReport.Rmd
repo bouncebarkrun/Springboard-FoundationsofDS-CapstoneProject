@@ -31,6 +31,8 @@ A new variable was created for playoff success in the Team and coded as 1 for th
 
 The cleaned datasets were merged by year and team so that all of the data now resides in one file.
 
+Additional variables were created with the final merged dataset to aid in future analysis: draft positions were subdivided into draft round and several scoring variables were created. 
+
 At this point, the new cleaned data file was written and saved as CSV file.
 
 The R code used to perform this data wrangling can be found here: [link](https://github.com/bouncebarkrun/SpringboardCapstoneProject/blob/master/Capstone%20Data%20Wrangling.R)
