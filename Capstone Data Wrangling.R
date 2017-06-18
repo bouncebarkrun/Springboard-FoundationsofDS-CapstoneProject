@@ -80,6 +80,21 @@ summary(TeamData)
 #Merge the cleaned datasets by year and team
 FinalData <- merge(PlayerData, TeamData, by=c("Team_ID", "Year"))
 
+##Create some new variables to help with data analysis.
+
+#Use Draft Pick variable to approximate Draft Round (30 teams in the NHL during these years means ~30 picks per round).
+FinalData$Draft_Round <- cut(FinalData$Draft_Pick, 
+                        breaks = c(-Inf, 30, 60, 90, 120, 150, 180, 210, Inf), 
+                        labels = c("1", "2", "3", "4", "5", "6", "7", "8"), 
+                        right = TRUE)
+
+#Add some variables that calculate player contribution to team totals.
+FinalData <- mutate(FinalData, GoalsPerGame = Goals/Games_Played)
+FinalData <- mutate(FinalData, PointsPerGame = Points/Games_Played)
+FinalData <- mutate(FinalData, ShotsPerGame = Shots/Games_Played)
+FinalData <- mutate(FinalData, PercentGoals = Goals/Team_GoalsFor * 100)
+FinalData <- mutate(FinalData, PercentGames = Games_Played/Team_Total_Games * 100)
+
 #Save the cleaned up datasets
 write.csv(FinalData, file = "~/Desktop/FinalData_clean.csv")
 
