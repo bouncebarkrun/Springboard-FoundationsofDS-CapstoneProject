@@ -1,0 +1,44 @@
+---
+title: "Statistical Analysis Report"
+author: "Molly McNamara"
+date: "6/18/2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = FALSE)
+## Load data packages that are needed
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(countrycode)
+
+## Import the data.  Fix an extra column that keeps importing from the CSV. Add a birth region converted from birth country.
+Hockey <- read_csv("~/Desktop/FinalData_clean.csv")
+Hockey <- select(Hockey, -X1)
+Hockey$BirthRegion <- countrycode(Hockey$Birth_Country, 'country.name', 'continent', warn = TRUE, custom_dict = NULL,
+                                  custom_match = NULL, origin_regex = FALSE)
+## Create a subset that only includes the first instance of each player. This way analysis of certain attributes is not skewed by multiple seasons of play by a player.
+ByPlayer <- Hockey[match(unique(Hockey$Player_ID), Hockey$Player_ID),]
+```
+
+## Initial Evaluation of the Dataset
+
+The datset was initially evaluated with the summary command to review the variables and their basic statistics.
+
+```{r Hockey, echo=TRUE}
+## Look at the main dataset.
+summary(Hockey)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
