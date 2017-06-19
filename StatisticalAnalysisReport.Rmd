@@ -7,8 +7,7 @@ output:
   word_document: default
 ---
 
-```{r setup, echo=FALSE}
-knitr::opts_chunk$set(include = FALSE)
+```{r setup, echo=FALSE, include=FALSE}
 ## Load data packages that are needed
 library(dplyr)
 library(ggplot2)
@@ -26,9 +25,11 @@ Hockey$BirthRegion <- countrycode(Hockey$Birth_Country, 'country.name', 'contine
 ByPlayer <- Hockey[match(unique(Hockey$Player_ID), Hockey$Player_ID),]
 ```
 
-## Initial Evaluation of the Dataset
+### Initial Evaluation of the Dataset
 
-The datset was initially evaluated with the summary command to review the variables and their basic statistics.
+The cleaned dataset of NHL players and teams from the data wrangling report was used for this exploration.  The R package "countrycode" was used to generate region (by continent) for player origins from the Birth_Country variable.  A sub-dataset was generated that used only the first instance of each unique player in order to evaluate their demographics without multiple years of play affecting the statistics.
+
+The full datset was initially evaluated with the summary command to review the variables and their basic statistics.
 
 ```{r summary, echo=TRUE}
 ## Look at the main dataset.
@@ -41,80 +42,71 @@ summary(ByPlayer[,c("Height", "Weight", "FirstNHLseason", "LastNHLseason", "Draf
 
 ```
 
-## Draft Statistics
+### Draft Statistics
 
-Draft statistics were initially evaluated by viewing a distribution of draft position of the players in this dataset.
+Draft statistics were initially evaluated by viewing a distribution of the draft rounds of the players in this dataset.
 ```{r draft stats, echo=FALSE}
 ggplot(ByPlayer, aes(x = Draft_Round)) + geom_bar()
-ggplot(ByPlayer, aes(x = Draft_Pick)) + geom_histogram()
 ```
 
-Of the players in these years 2000-2012, it appears to be skewed in one direction, towards players drafted in earlier rounds.  It may be that players drafted in earlier rounds play longer in the league and therefore are more highly represented.
+For active players between 2000-2012, the round they were drafted in appears to be skewed in one direction, towards players drafted in earlier rounds.  It may be that players drafted in earlier rounds play longer in the league and therefore are more highly represented.
 
-To further investigate that point, we make a comparison between draft round and years in the NHL for players in this dataset.
+To further investigate that point, a comparison was made between draft round and active years (up to 2012) in the NHL for players in this dataset.
 ```{r yearsplayed, echo=FALSE}
 YearsPlayed = ByPlayer$LastNHLseason - ByPlayer$FirstNHLseason
 ggplot(ByPlayer, aes(x = Draft_Round, y = YearsPlayed)) + geom_jitter() + geom_smooth(method = lm)
 ```
+
 It does indeed appear that players from earlier draft rounds may have somewhat longer NHL careers.
 
-To further explore factors around the NHL draft, tables were generated that summarized what round a player was drafted in and at what age by birth country.
+### Draft and Country of Origin
+To further explore factors around the NHL draft, tables were generated to summarize draft round and draft age by birth country.
 
-```{r kable, echo=FALSE}
-Draftroundbycountry <- ByPlayer %>% group_by(Birth_Country) %>% summarize(mean=mean(Draft_Round))
-Draftagebycountry <- ByPlayer %>% group_by(Birth_Country) %>% summarize(mean=mean(Draft_Age))
-knitr::kable(Draftroundbycountry, digits=1)
-knitr::kable(Draftagebycountry, digits=1)
+```{r kable, echo=FALSE, fig.width=3}
+Draftroundbycountry <- ByPlayer %>% group_by(Birth_Country) %>% summarize(MeanDraftRound=mean(Draft_Round))
+Draftagebycountry <- ByPlayer %>% group_by(Birth_Country) %>% summarize(MeanDraftAge=mean(Draft_Age))
+knitr::kable(Draftroundbycountry, digits=1, caption="Draft Round by Country")
+knitr::kable(Draftagebycountry, digits=1, caption="Draft Age by Country")
 ```
-Draft age looks fairly consistent, though this can be examined further later.
 
-Next is a simple comparison of how many players were drafted from different geographical regions.
+Mean draft age looks to be similar across most countries, though this can be examined further later.
+
+While it appears drafted players originate from many different countries, the NHL is based in the US and Canada; it might be useful to see regionally where the most players come from.
 ```{r regions, echo=FALSE}
 ggplot(ByPlayer, aes(x = BirthRegion)) + geom_histogram(stat="count")
 ```
-Clearly the Americas source most NHL players followed by Europe.
 
-One might wonder if players from some regions drafted earlier or later in the draft on average.
+The Americas and Europe generate the vast majority of players drafted in the NHL.
+
+Next it might be of interest to see if players from the various regions are drafted earlier or later than one another.
 ```{r region draft, echo=FALSE}
 ggplot(ByPlayer, aes(BirthRegion, Draft_Round)) + geom_boxplot()
 ```
-There may be some differences between regions, to be examined further later. As seen in the prior graph, the majority of players come from the Americas and Europe, which appear to be distributed similarly here.
 
-## Scoring Statistics
+There may be some differences between regions. However, as seen in the prior graph, the majority of players come from the Americas and Europe, which appear to be distributed similarly here.
 
-Shots per game and penalty minutes are player statistics that might impact their goal scoring.
-```{r, echo=FALSE}
-ggplot(Hockey, aes(x = ShotsPerGame, y = Goals)) + geom_point()
-```
-```{r, echo=FALSE}
-ggplot(Hockey, aes(x = Penalty_Minutes, y = Goals)) + geom_point()
-```
-
-As one might expect, it appears the more shots a player takes, the more goals he scores.The relationship between time spent in the penalty box and goals is less clear (one might expect more time in the box leaves less time for goals).
-
-It might be expected that teams who score more goals in a year are more likely to go to the playoffs.
-```{r, echo=FALSE}
-ggplot(Hockey, aes(x = Year, y=Team_GoalsFor, col = Playoffs)) + geom_point()
-```
-This graph seems to indicate such, though there are cases where the opposite is true.
-
-Do players who are drafted in earlier rounds score a greater percentage of their teams' goals?
+Players who are taken as high draft picks might be expected to make a greater contribution to their team.  One way to look at this might be to evaluate if players who are drafted in earlier rounds score a greater percentage of their teams' goals.
 ```{r, echo=FALSE}
 ggplot(Hockey, aes(x = Year, y=PercentGoals, col = Draft_Round)) + geom_jitter()
 ```
-It is difficult to tell from this graph. but maybe?
 
-Do players drafted in earlier rounds score more goals per game? Does this affect their team making the playoffs? Is there any difference based on their region of origin?
+From this graph it does appear the players who score the highest percentage of their teams' goals were drafted in the earliest rounds but the relationship is less clear in the bulk of the data.
+
+One might note that the data is missing for 2004 on this graph.  Further investigation reveals that there was a leaguewide lockout in 2004 and no NHL games were played during a labor dispute between the owners and players.
+
+Another way to evaluate the contribution of players drafted in earlier rounds might be to see if they score more goals per game and if this helps their team make the playoffs.
 ```{r, echo=FALSE}
 ggplot(Hockey, aes(x = Draft_Pick, y=GoalsPerGame, col=Playoffs)) + geom_point(alpha = 0.5, position = "jitter") + geom_smooth(method = lm)
 ```
+
+It does look like there is a slight trend for more goals per game from higher-drafted players but it's not clear if this impacts making the playoffs. 
+
+Player age at draft is another variable that might impact goal scoring and teams making the playoffs. 
 ```{r, echo=FALSE}
-ggplot(Hockey, aes(x = Draft_Pick, y=GoalsPerGame, col=BirthRegion)) + geom_point(alpha = 0.5) 
+summary(ByPlayer[,c("Draft_Age")])
 ```
 
-It does look like perhaps the trend is for more goals per game from higher-drafted players but it's not clear if this impacts making the playoffs.  The impact of birth region is not entirely clear though it seems possibly higher-drafted European players score a greater number of goals per game.
-
-Does draft age impact goal scoring?
+It appears that most players are drafted in a very narrow range, but exceptions do occur (31 years old in one case!). The next graph displays how draft age and round are related to goal scoring and teams making or not making the playoffs.
 ```{r, echo=FALSE}
 posn.jd <- position_jitterdodge(0.5, 0, 0.6)
 ggplot(Hockey, aes(x = Draft_Age, y = Goals, color = Draft_Round)) + 
@@ -122,14 +114,43 @@ ggplot(Hockey, aes(x = Draft_Age, y = Goals, color = Draft_Round)) +
   facet_grid(. ~ Playoffs)
 ```
 
-Players drafted younger may score more goals, on teams that do and don't make the playoffs, if they were players drafted in early rounds.
+It seems that players drafted younger may score more goals if they were players drafted in early rounds, though there does not appear to be any difference between the teams making and not making the playoffs.
 
-Does there appear to be any difference in goal scoring, as a function of round drafted, when compared between teams that do and don't make the playoffs and looking at birth region?
+### Player Scoring Statistics
+
+For a first look at scoring statistics, we evaluate how shots per game, the number of shots players average for each game, and penalty minutes, the time spent in the penalty box instead of on the ice, impact the rate of goal scoring.
 ```{r, echo=FALSE}
-ggplot(Hockey, aes(x = Draft_Round, y = Goals, color = BirthRegion)) + 
-  geom_point(size = 3, alpha = 0.5, position = posn.jd) + 
-  facet_grid(. ~ Playoffs)
+ggplot(Hockey, aes(x = ShotsPerGame, y = Goals)) + geom_point()
 ```
-No clear difference is seen.
+```{r, echo=FALSE}
+ggplot(Hockey, aes(x = Penalty_Minutes, y = Goals)) + geom_point()
+```
+
+As one might expect, it appears the more shots a player takes, the more goals he scores. The relationship between time spent in the penalty box and goals is less clear but may suggest that more time spent serving penalties leaves less time to score goals.
+
+### Team Scoring Statistics
+
+It could be hypothesized that teams who score more goals in a year and allows less goals in a year are more likely to go to the playoffs.
+```{r, echo=FALSE}
+ggplot(Hockey, aes(x = Year, y=Team_GoalsFor, col = Playoffs)) + geom_point()
+```
+
+```{r, echo=FALSE}
+ggplot(Hockey, aes(x = Year, y=Team_GoalsAgainst, col = Playoffs)) + geom_point()
+```
+
+This hypothesis appears to be true for the highest goal-scoring teams and lowest goal-allowing teams year-to-year.
+
+Historically, some teams and divisions (geographical groupings of teams) are consistently successful while others struggle.
+```{r, echo=FALSE}
+ggplot(Hockey, aes(x = Year, y=Division_ID, col = Playoffs)) + geom_jitter()
+```
+
+This graph may suggest that the SouthEast (SE) division is more hit-or-miss in terms of making the playoffs than the NorthEast (NE) division prior ot the 2004 lockout or the Atlantic (AT) division in the years after the lockout.
+
+### Summary
+
+This initial statistical and graphical foray into the dataset demonstrates that there are many potential trends to explore further in the model as well as a lot of unclear relationships at this early stage. With an eye towards evaluating how well draft position predicts future player and team success, it may be very interesting to investigate how early in a player's career this impact is made.
+
 
 
