@@ -134,7 +134,7 @@ Historically, some teams and divisions (geographical groupings of teams) are con
 ggplot(Hockey, aes(x = Year, y=Division_ID, col = Playoffs)) + geom_jitter()
 ```
 
-This graph may suggest that the SouthEast (SE) division is more hit-or-miss in terms of making the playoffs than the NorthEast (NE) division prior ot the 2004 lockout or the Atlantic (AT) division in the years after the lockout.
+This graph may suggest that the SouthEast (SE) division is more hit-or-miss in terms of making the playoffs than the NorthEast (NE) division prior to the 2004 lockout or the Atlantic (AT) division in the years after the lockout.
 
 ### Summary
 
