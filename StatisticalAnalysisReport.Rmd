@@ -2,9 +2,9 @@
 title: "Statistical Analysis Report"
 author: "Molly McNamara"
 output:
-  html_document:
-  pdf_document: default
   word_document: default
+  pdf_document: default
+  html_document: null
 ---
 
 ```{r setup, echo=FALSE, include=FALSE}
@@ -29,12 +29,7 @@ ByPlayer <- Hockey[match(unique(Hockey$Player_ID), Hockey$Player_ID),]
 
 The cleaned dataset of NHL players and teams from the data wrangling report was used for this exploration.  The R package "countrycode" was used to generate region (by continent) for player origins from the Birth_Country variable.  A sub-dataset was generated that used only the first instance of each unique player in order to evaluate their demographics without multiple years of play affecting the statistics.
 
-The full datset was initially evaluated with the summary command to review the variables and their basic statistics.
-
-```{r summary, echo=TRUE}
-## Look at the main dataset.
-summary(Hockey)
-```
+The full datset was initially evaluated with the summary command to review the variables and their basic statistics. See Appendix 1.
 
 Basic statistics about players and their draft information were viewed next.
 ```{r player, echo=FALSE}
@@ -60,14 +55,7 @@ ggplot(ByPlayer, aes(x = Draft_Round, y = YearsPlayed)) + geom_jitter() + geom_s
 It does indeed appear that players from earlier draft rounds may have somewhat longer NHL careers.
 
 ### Draft and Country of Origin
-To further explore factors around the NHL draft, tables were generated to summarize draft round and draft age by birth country.
-
-```{r kable, echo=FALSE, fig.width=3}
-Draftroundbycountry <- ByPlayer %>% group_by(Birth_Country) %>% summarize(MeanDraftRound=mean(Draft_Round))
-Draftagebycountry <- ByPlayer %>% group_by(Birth_Country) %>% summarize(MeanDraftAge=mean(Draft_Age))
-knitr::kable(Draftroundbycountry, digits=1, caption="Draft Round by Country")
-knitr::kable(Draftagebycountry, digits=1, caption="Draft Age by Country")
-```
+To further explore factors around the NHL draft, tables were generated to summarize draft round and draft age by birth country. See Appendix 2.
 
 Mean draft age looks to be similar across most countries, though this can be examined further later.
 
@@ -152,5 +140,20 @@ This graph may suggest that the SouthEast (SE) division is more hit-or-miss in t
 
 This initial statistical and graphical foray into the dataset demonstrates that there are many potential trends to explore further in the model as well as a lot of unclear relationships at this early stage. With an eye towards evaluating how well draft position predicts future player and team success, it may be very interesting to investigate how early in a player's career this impact is made.
 
+### Appendix 1
+
+```{r summary, echo=TRUE}
+## Look at the main dataset.
+summary(Hockey)
+```
+
+### Appendix 2
+
+```{r kable, echo=FALSE, fig.width=3}
+Draftroundbycountry <- ByPlayer %>% group_by(Birth_Country) %>% summarize(MeanDraftRound=mean(Draft_Round))
+Draftagebycountry <- ByPlayer %>% group_by(Birth_Country) %>% summarize(MeanDraftAge=mean(Draft_Age))
+knitr::kable(Draftroundbycountry, digits=1, caption="Draft Round by Country")
+knitr::kable(Draftagebycountry, digits=1, caption="Draft Age by Country")
+```
 
 
