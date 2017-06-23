@@ -2,17 +2,19 @@
 install.packages("dplyr")
 install.packages("readr")
 install.packages("tidyr")
+install.packages("countrycode")
 
 #Load data packages
 library("dplyr")
 library("readr")
 library("tidyr")
+library("countrycode")
 
 #Import data sets
-Master <- read_csv("~/Desktop/Master.csv")
-Scoring <- read_csv("~/Desktop/Scoring.csv")
-Draft <- read_csv("~/Desktop/DraftData.csv")
-Teams <- read_csv("~/Desktop/Teams.csv")
+Master <- read_csv("C:/Users/mmcnamara/Desktop/Master.csv")
+Scoring <- read_csv("C:/Users/mmcnamara/Desktop/Scoring.csv")
+Draft <- read_csv("C:/Users/mmcnamara/Desktop/DraftData.csv")
+Teams <- read_csv("C:/Users/mmcnamara/Desktop/Teams.csv")
 
 #Convert datasets to a tbl class for easier viewing
 tbl_df(Master)
@@ -44,8 +46,8 @@ PlayerSubset <- subset(AllData, Year >= 2000)
 TeamSubset <- subset(Teams, Year >= 2000)
 
 #Remove some unnecessary columns
-PlayerData <- select(PlayerSubset, -Birth_Year, -Birth_Month, -Birth_Day, -Death_Year, -Death_Month, -Death_Day, -Position, -Player, -ihdbID, -League_ID, -Coach_ID, -HallFame_ID, -Name_Notes, -Given_Name, -Nickname, -legendsID, -hrefID, -FirstWHAseason, -LastWHAseason, -LastYearPlayed)
-TeamData <- select(TeamSubset, -League_ID, -FranchiseID)
+PlayerData <- select(PlayerSubset, -Birth_Year, -Birth_Month, -Birth_Day, -Death_Year, -Death_Month, -Death_Day, -Position, -Player, -ihdbID, -League_ID, -Coach_ID, -HallFame_ID, -Name_Notes, -Given_Name, -Nickname, -legendsID, -hrefID, -FirstWHAseason, -LastWHAseason, -LastYearPlayed, -PS_Goals, -PS_Assists, -PS_Points, -PS_Games, -PS_PenaltyMin, -PS_PlusMinus, -PS_PowerplayG, -PS_PowerplayA, -PS_ShorthandedG, -PS_ShorthandedA, -PS_GamewinningG, -PS_Shots)
+TeamData <- select(TeamSubset, -League_ID, -FranchiseID, -Team_PPC, -Team_SHA, -Team_PKG, -Team_PKC, -Team_SHF)
 
 #Convert multiple fields to factors, integers and numeric
 playercols <- c("Position_Played", "Team_ID", "Birth_Country", "Birth_City", "Birth_State", "Death_Country", "Death_City", "Death_State", "Shooting_Hand", "Draft_Team", "Amateur_Team")
@@ -65,7 +67,7 @@ is.na(TeamData)
 
 #NAs in certain fields are acceptable as they aren't applicable to some players: death statistics (many players haven't died as yet)
 #Scoring statistics are NA where players or teams did not contribute to these stats during a season. These will be replaced with a 0.
-NAcols <- c("Games_Played", "Goals", "Assists", "Points", "Penalty_Minutes", "Plus_Minus", "PP_Goals", "PP_Assists", "SH_Goals", "SH_Assists", "Gamewinning_Goals", "GameTying_Goals", "Shots", "PS_Games", "PS_Goals", "PS_Assists", "PS_Points", "PS_PenaltyMin", "PS_PlusMinus", "PS_PowerplayG", "PS_PowerplayA", "PS_ShorthandedG", "PS_ShorthandedA", "PS_GamewinningG", "PS_Shots")
+NAcols <- c("Games_Played", "Goals", "Assists", "Points", "Penalty_Minutes", "Plus_Minus", "PP_Goals", "PP_Assists", "SH_Goals", "SH_Assists", "Gamewinning_Goals", "GameTying_Goals", "Shots")
 PlayerData[NAcols][is.na(PlayerData[NAcols])] <- 0
 NAteam <- c("Team_Ties", "Team_ShootoutWins", "Team_ShootoutLosses")
 TeamData[NAteam][is.na(TeamData[NAteam])] <- 0
@@ -97,6 +99,10 @@ FinalData <- mutate(FinalData, ShotsPerGame = Shots/Games_Played)
 FinalData <- mutate(FinalData, PercentGoals = Goals/Team_GoalsFor * 100)
 FinalData <- mutate(FinalData, PercentGames = Games_Played/Team_Total_Games * 100)
 
+#Add a birth region converted from birth country.
+FinalData$BirthRegion <- countrycode(FinalData$Birth_Country, 'country.name', 'continent', warn = TRUE, custom_dict = NULL,
+                                  custom_match = NULL, origin_regex = FALSE)
+
 #Save the cleaned up datasets
-write.csv(FinalData, file = "~/Desktop/FinalData_clean.csv")
+write.csv(FinalData, file = "C:/Users/mmcnamara/Desktop/FinalData_clean.csv")
 
