@@ -32,6 +32,47 @@ The datasets were evaluated with the summary() command to assess the presence of
 
 New variables were created for team playoff success, birth regions, draft round, and additional scoring statistics. Finally, the cleaned datasets were merged by year and team and the new cleaned data file was written and saved as CSV file.
 
+## Dataset Variables
+* Team ID, Conference and Division
+* Team Season end rank and Playoff result
+* Team made playoffs (0 or 1)
+* Team Games, Wins, Losses, Ties, Overtime Losses, Points, Shootout Wins and Shootout Losses
+* Team Goals For and Goals Against
+* Team Penalty Minutes and Bench Minors
+* Team 
+* Year (Season)
+* Player ID
+* First Name and Last Name
+* Height and Weight
+* Shooting Hand
+* First NHL season and Last NHL season
+* Position Played
+* Birth Country, Birth State/Province, Birth City
+* Death Country, Death State/Province, Death City
+* Birthdate and Deathdate
+* Birth Region
+* Stint with team
+* Games Played
+* Goals, Assists and Points
+* Penalty Minutes
+* Plus Minus Rating
+* Powerplay Goals and Assists
+* Shorthanded Goals and Assists
+* Gamewinning Goals and Gametying Goals
+* Shots
+* Goals and Shots Per Game
+* Percent of Team Goals Scored
+* Percent of Team Games Played
+* Draft Pick and Draft Round
+* Draft Year
+* Draft Team
+* Draft Age
+* Amateur Team and League
+
+
+
+
+
 ## Limitations
 
 Several limitations can be identfied in the final dataset at this point: (a) the lack of play statistics prior to draft and draft combine results (which are generally kept confidential by the NHL), which could have been useful in predicting future NHL performance and team success; (b) this data largely ignores the defensive contribution of goaltenders by omission of goaltending statistics; and (c) Time On Ice (TOI), a well-known parameter of player performance, is not available.
