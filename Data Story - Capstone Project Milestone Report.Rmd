@@ -125,4 +125,8 @@ Several limitations can be identfied in the final dataset at this point: (a) the
 
 # Preliminary Exploration
 
-# Approach
+The purpose of the initial data exploration was to screen for any obvious trends in the data and evaluate the relationships between player demographics and characteristics and teams making the playoffs.  
+
+Add world map of players
+
+# Modeling Approach
