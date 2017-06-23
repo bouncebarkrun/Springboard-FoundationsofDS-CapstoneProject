@@ -1,0 +1,41 @@
+---
+title: "Data Story - Capstone Project Milestone Report"
+author: "Molly McNamara"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Hockey and the Potential Impact of Data Science
+
+The National Hockey League (NHL) is considered to be one of the four major professional sports leagues in the United States (though ranked behind baseball, football and basketball). The NHL is a binational entity split between the US and Canada, where hockey is by far the most popular sport. The economics of hockey are complicated by the shared border and exchange rates, but team success ultimately drives financial success for the team and the league. Teams see an impact of improved performance and win totals on season ticket sales and sponsorship revenue.
+
+Establishing the right balance of player skills and team needs to make a successful run at the playoffs is the challenge of every NHL general manager (GM). While in-game coaching decisions are left to the coaching staff, the GM is responsible for acquiring and dismissing players as well as the coach. A skilled GM evaluates the existing team members and identifies gaps or needs in order to find and obtain talent that will support and improve the team as a whole. Better analysis of player and league data can help guide a GM in improved decision making when acquiring team talent, hopefully resulting in a more successful team.
+
+##The Data
+
+The project dataset consists of NHL player, team and coaching statistics for years 2000-2011 and NHL draft data from the late 1980s through 2010. These datasets include player names, ages and birthdates, countries of origin, positions played, scoring and defensive statistics by year, junior level and NHL teams and leagues played in, coaching records, and more. The information is gathered from several sources and in several separate files and formats.
+
+## Data Wrangling
+
+The datasets for this project were obtained from The Hockey Database and Hockey Reference. Data from The Hockey Database was available in CSV files by subject; data from Hockey Reference required download, compilation in a TXT file and conversion of the entire dataset to CSV.
+
+Four files were combined to create the final cleaned dataset for analysis: Master (basic demographic information on all NHL players from 1908 to 2011), Scoring (scoring statistics for all NHL players from 1908 to 2011), Teams (team statistics and playoff outcomes from 1908 to 2011), and Draft (player draft information from 1979 to 2010). The date range for draft data was determined by identifying the earliest drafted player still playing in the period of interest for this project (the project will evaluate game data from 2000-2011 - a player drafted in 1979 was still playing in 2000) and the latest possible drafted player who would play in this time period (2010). Note that there is no data for 2004 due to a league-wide labor dispute (lockout) wherein the entire season was cancelled and no games were played.
+
+Columns for all 4 files were renamed to understand the variables more easily. In the Draft dataset, the Player column was split into two columns, separating the player name and ID. 
+
+Unnecessary or duplicative variables were removed. Multiple fields were converted to factors or integers as appropriate. Birth and death month/day/year columns were joined into a single date column for each event. The datasets were subset to the years 2000 to 2011.
+
+The datasets were evaluated with the summary() command to assess the presence of any obvious outliers. NA values in both sets were identified. In the case of certain variables, such as death statistics, NA is appropriate as most of the players in the subset timeframe had not yet died. Scoring statistics that displayed NA incorrectly (for example, a player did not score any goals in a given year) were replaced with a 0.
+
+New variables were created for team playoff success, birth regions, draft round, and additional scoring statistics. Finally, the cleaned datasets were merged by year and team and the new cleaned data file was written and saved as CSV file.
+
+## Limitations
+
+Several limitations can be identfied in the final dataset at this point: (a) the lack of play statistics prior to draft and draft combine results (which are generally kept confidential by the NHL), which could have been useful in predicting future NHL performance and team success; (b) this data largely ignores the defensive contribution of goaltenders by omission of goaltending statistics; and (c) Time On Ice (TOI), a well-known parameter of player performance, is not available.
+
+## Preliminary Exploration
+
+## Approach
