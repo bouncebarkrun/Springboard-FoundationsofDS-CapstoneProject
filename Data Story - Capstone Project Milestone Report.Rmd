@@ -6,12 +6,6 @@ output: word_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-## Load data packages that are needed
-library(dplyr)
-library(ggplot2)
-library(readr)
-library(knitr)
-library(rmarkdown)
 ```
 
 # Hockey and the Potential Impact of Data Science
@@ -20,7 +14,7 @@ The National Hockey League (NHL) is considered to be one of the four major profe
 
 Establishing the right balance of player skills and team needs to make a successful run at the playoffs is the challenge of every NHL general manager (GM). While in-game coaching decisions are left to the coaching staff, the GM is responsible for acquiring and dismissing players as well as the coach. A skilled GM evaluates the existing team members and identifies gaps or needs in order to find and obtain talent that will support and improve the team as a whole. Better analysis of player and league data can help guide a GM in improved decision making when acquiring team talent, hopefully resulting in a more successful team.
 
-#The Data
+# The Data
 
 The project dataset consists of NHL player, team and coaching statistics for years 2000-2011 and NHL draft data from the late 1980s through 2010. These datasets include player names, ages and birthdates, countries of origin, positions played, scoring and defensive statistics by year, junior level and NHL teams and leagues played in, coaching records, and more. The information is gathered from several sources and in several separate files and formats.
 
