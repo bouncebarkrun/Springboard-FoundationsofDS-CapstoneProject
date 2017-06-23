@@ -4,11 +4,10 @@ library(ggplot2)
 library(readr)
 library(countrycode)
 
-## Import the data.  Fix an extra column that keeps importing from the CSV. Add a birth region converted from birth country.
+## Import the data.  Fix an extra column that keeps importing from the CSV. 
 Hockey <- read_csv("~/Desktop/FinalData_clean.csv")
 Hockey <- select(Hockey, -X1)
-Hockey$BirthRegion <- countrycode(Hockey$Birth_Country, 'country.name', 'continent', warn = TRUE, custom_dict = NULL,
-                                  custom_match = NULL, origin_regex = FALSE)
+
 
 ## Create a subset that only includes the first instance of each player. This way analysis of certain attributes is not skewed by multiple seasons of play by a player.
 ByPlayer <- Hockey[match(unique(Hockey$Player_ID), Hockey$Player_ID),]
