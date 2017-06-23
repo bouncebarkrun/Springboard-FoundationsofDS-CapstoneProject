@@ -34,9 +34,9 @@ New variables were created for team playoff success, birth regions, draft round,
 
 ## Dataset Composition
 
-*Team ID, Conference and Division
-*Team Season end rank and Playoff result
-*Team made playoffs (0 or 1)
+  *Team ID, Conference and Division
+  *Team Season end rank and Playoff result
+  *Team made playoffs (0 or 1)
 *Team Games, Wins, Losses, Ties, Overtime Losses, Points, Shootout Wins and Shootout Losses
 *Team Goals For and Goals Against
 *Team Penalty Minutes and Bench Minors
