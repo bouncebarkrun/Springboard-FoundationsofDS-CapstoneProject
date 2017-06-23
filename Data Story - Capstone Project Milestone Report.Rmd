@@ -6,15 +6,21 @@ output: word_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+## Load data packages that are needed
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(knitr)
+library(rmarkdown)
 ```
 
-## Hockey and the Potential Impact of Data Science
+# Hockey and the Potential Impact of Data Science
 
 The National Hockey League (NHL) is considered to be one of the four major professional sports leagues in the United States (though ranked behind baseball, football and basketball). The NHL is a binational entity split between the US and Canada, where hockey is by far the most popular sport. The economics of hockey are complicated by the shared border and exchange rates, but team success ultimately drives financial success for the team and the league. Teams see an impact of improved performance and win totals on season ticket sales and sponsorship revenue.
 
 Establishing the right balance of player skills and team needs to make a successful run at the playoffs is the challenge of every NHL general manager (GM). While in-game coaching decisions are left to the coaching staff, the GM is responsible for acquiring and dismissing players as well as the coach. A skilled GM evaluates the existing team members and identifies gaps or needs in order to find and obtain talent that will support and improve the team as a whole. Better analysis of player and league data can help guide a GM in improved decision making when acquiring team talent, hopefully resulting in a more successful team.
 
-##The Data
+#The Data
 
 The project dataset consists of NHL player, team and coaching statistics for years 2000-2011 and NHL draft data from the late 1980s through 2010. These datasets include player names, ages and birthdates, countries of origin, positions played, scoring and defensive statistics by year, junior level and NHL teams and leagues played in, coaching records, and more. The information is gathered from several sources and in several separate files and formats.
 
@@ -24,19 +30,69 @@ The datasets for this project were obtained from The Hockey Database and Hockey 
 
 Four files were combined to create the final cleaned dataset for analysis: Master (basic demographic information on all NHL players from 1908 to 2011), Scoring (scoring statistics for all NHL players from 1908 to 2011), Teams (team statistics and playoff outcomes from 1908 to 2011), and Draft (player draft information from 1979 to 2010). The date range for draft data was determined by identifying the earliest drafted player still playing in the period of interest for this project (the project will evaluate game data from 2000-2011 - a player drafted in 1979 was still playing in 2000) and the latest possible drafted player who would play in this time period (2010). Note that there is no data for 2004 due to a league-wide labor dispute (lockout) wherein the entire season was cancelled and no games were played.
 
-Columns for all 4 files were renamed to understand the variables more easily. In the Draft dataset, the Player column was split into two columns, separating the player name and ID. 
+The R packages used for data wrangling were as follows:
+```{r}
+install.packages("dplyr")
+install.packages("readr")
+install.packages("tidyr")
+install.packages("countrycode")
+```
+
+Columns for all 4 files were renamed to understand the variables more easily. Columns for player name-ID and amateur team-league were split into their separate components. 
+
+```{r}
+#Start cleaning up column names to be more easily understood
+colnames(Master) <- c("Player_ID", "Coach_ID", "HallFame_ID", "First_Name", "Last_Name", "Name_Notes", "Given_Name", "Nickname", "Height", "Weight", "Shooting_Hand", "legendsID", "ihdbID", "hrefID", "FirstNHLseason", "LastNHLseason", "FirstWHAseason", "LastWHAseason", "Position_Played", "Birth_Year", "Birth_Month", "Birth_Day", "Birth_Country", "Birth_State", "Birth_City", "Death_Year", "Death_Month", "Death_Day", "Death_Country", "Death_State", "Death_City")
+colnames(Scoring) <- c("Player_ID", "Year", "Stint", "Team_ID", "League_ID", "Position", "Games_Played", "Goals", "Assists", "Points", "Penalty_Minutes", "Plus_Minus", "PP_Goals", "PP_Assists", "SH_Goals", "SH_Assists", "Gamewinning_Goals", "GameTying_Goals", "Shots", "PS_Games", "PS_Goals", "PS_Assists", "PS_Points", "PS_PenaltyMin", "PS_PlusMinus", "PS_PowerplayG", "PS_PowerplayA", "PS_ShorthandedG", "PS_ShorthandedA", "PS_GamewinningG", "PS_Shots")
+colnames(Draft) <- c("Draft_Pick", "Draft_Year", "Draft_Team", "Player", "Draft_Age", "LastYearPlayed", "Amateur_Team")
+colnames(Teams) <- c("Year", "League_ID", "Team_ID", "FranchiseID", "Conference_ID", "Division_ID", "SeasonEnd_Rank", "Playoff_Result", "Team_Total_Games", "Team_Wins", "Team_Losses", "Team_Ties", "Team_OT_Losses", "Team_Points", "Team_ShootoutWins", "Team_ShootoutLosses", "Team_GoalsFor", "Team_GoalsAgainst", "TeamName", "Team_PenaltyMin", "Team_BenchMinors", "Team_PPG", "Team_PPC", "Team_SHA", "Team_PKG", "Team_PKC", "Team_SHF")
+
+#Separate player name and Player_ID from each other in Draft database. Then separate Amateur Team and Amateur League.
+Draft <- separate(Draft, Player, into = c("Player", "Player_ID"), sep = "/")
+Draft <- separate(Draft, Amateur_Team, into = c("AmateurTeam", "AmateurLeague"), sep = "[(]")
+gsub("[)]", "", Draft$AmateurLeague)
+```
 
 Unnecessary or duplicative variables were removed. Multiple fields were converted to factors or integers as appropriate. Birth and death month/day/year columns were joined into a single date column for each event. The datasets were subset to the years 2000 to 2011.
 
 The datasets were evaluated with the summary() command to assess the presence of any obvious outliers. NA values in both sets were identified. In the case of certain variables, such as death statistics, NA is appropriate as most of the players in the subset timeframe had not yet died. Scoring statistics that displayed NA incorrectly (for example, a player did not score any goals in a given year) were replaced with a 0.
 
+```{r}
+#NAs in certain fields are acceptable as they aren't applicable to some players: death statistics (many players haven't died as yet)
+#Scoring statistics are NA where players or teams did not contribute to these stats during a season. These will be replaced with a 0.
+NAcols <- c("Games_Played", "Goals", "Assists", "Points", "Penalty_Minutes", "Plus_Minus", "PP_Goals", "PP_Assists", "SH_Goals", "SH_Assists", "Gamewinning_Goals", "GameTying_Goals", "Shots")
+PlayerData[NAcols][is.na(PlayerData[NAcols])] <- 0
+NAteam <- c("Team_Ties", "Team_ShootoutWins", "Team_ShootoutLosses")
+TeamData[NAteam][is.na(TeamData[NAteam])] <- 0
+```
+
 New variables were created for team playoff success, birth regions, draft round, and additional scoring statistics. Finally, the cleaned datasets were merged by year and team and the new cleaned data file was written and saved as CSV file.
 
-## Dataset Composition
+```{r}
+#Add a Playoff column to capture if teams made the playoffs with a simple 0 or 1
+TeamData <- mutate(TeamData, Playoffs = as.numeric(TeamData$Playoff_Result != "NA"))
+PlayoffRes <- c("Playoffs")
+TeamData[PlayoffRes][is.na(TeamData[PlayoffRes])] <- 0
 
-  *Team ID, Conference and Division
-  *Team Season end rank and Playoff result
-  *Team made playoffs (0 or 1)
+#Add some variables that calculate player contribution to team totals.
+FinalData <- mutate(FinalData, GoalsPerGame = Goals/Games_Played)
+FinalData <- mutate(FinalData, PointsPerGame = Points/Games_Played)
+FinalData <- mutate(FinalData, ShotsPerGame = Shots/Games_Played)
+FinalData <- mutate(FinalData, PercentGoals = Goals/Team_GoalsFor * 100)
+FinalData <- mutate(FinalData, PercentGames = Games_Played/Team_Total_Games * 100)
+
+#Add a birth region converted from birth country.
+FinalData$BirthRegion <- countrycode(FinalData$Birth_Country, 'country.name', 'continent', warn = TRUE, custom_dict = NULL,
+                                  custom_match = NULL, origin_regex = FALSE)
+
+```
+
+
+## Final Dataset Composition
+
+*Team ID, Conference and Division
+*Team Season end rank and Playoff result
+*Team made playoffs (0 or 1)
 *Team Games, Wins, Losses, Ties, Overtime Losses, Points, Shootout Wins and Shootout Losses
 *Team Goals For and Goals Against
 *Team Penalty Minutes and Bench Minors
@@ -73,6 +129,6 @@ New variables were created for team playoff success, birth regions, draft round,
 
 Several limitations can be identfied in the final dataset at this point: (a) the lack of play statistics prior to draft and draft combine results (which are generally kept confidential by the NHL), which could have been useful in predicting future NHL performance and team success; (b) this data largely ignores the defensive contribution of goaltenders by omission of goaltending statistics; and (c) Time On Ice (TOI), a well-known parameter of player performance, is not available.
 
-## Preliminary Exploration
+# Preliminary Exploration
 
-## Approach
+# Approach
