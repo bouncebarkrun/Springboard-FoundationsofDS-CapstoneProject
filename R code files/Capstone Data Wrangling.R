@@ -98,6 +98,7 @@ FinalData <- mutate(FinalData, PointsPerGame = Points/Games_Played)
 FinalData <- mutate(FinalData, ShotsPerGame = Shots/Games_Played)
 FinalData <- mutate(FinalData, PercentGoals = Goals/Team_GoalsFor * 100)
 FinalData <- mutate(FinalData, PercentGames = Games_Played/Team_Total_Games * 100)
+FinalData <- mutate(FinalData, YearsExperience = Year - FirstNHLseason)
 
 #Add a birth region converted from birth country.
 FinalData$BirthRegion <- countrycode(FinalData$Birth_Country, 'country.name', 'continent', warn = TRUE, custom_dict = NULL,
