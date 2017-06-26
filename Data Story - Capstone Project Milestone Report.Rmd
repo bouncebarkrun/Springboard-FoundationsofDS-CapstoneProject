@@ -113,36 +113,36 @@ MapData <- joinCountryData2Map(BirthCountries
 The purpose of the initial data exploration was to screen for any obvious trends in the data and evaluate the relationships between player demographics and characteristics and teams making the playoffs.  
 
 Player birth countries were mapped to a world map to evaluate the many origins of players in this dataset.
-```{r, echo=TRUE}
+```{r, echo=FALSE}
 mapCountryData(MapData
                ,nameColumnToPlot='NumberofPlayers', catMethod = "fixedWidth")
 ```
 
 While it appears drafted players originate from many different countries, the NHL is based in the US and Canada; it might be useful to see regionally where the most players come from.
-```{r, echo=TRUE}
+```{r, echo=FALSE}
 ggplot(ByPlayer, aes(x = BirthRegion)) + geom_histogram(stat="count")
 ```
 
 The Americas and Europe generate the vast majority of players drafted in the NHL. 
 
 Draft statistics were initially evaluated by viewing a distribution of the draft rounds of the players in this dataset.
-```{r, echo=TRUE}
+```{r, echo=FALSE}
 ggplot(ByPlayer, aes(x = Draft_Round)) + geom_bar()
 ```
 
 The draft round in the dataset appears to be skewed towards earlier rounds. A comparison between draft round and active years (up to 2012) in the NHL supports the idea that players from earlier draft rounds may have somewhat longer NHL careers.
-```{r, echo=TRUE}
+```{r, echo=FALSE}
 YearsPlayed = ByPlayer$LastNHLseason - ByPlayer$FirstNHLseason
 ggplot(ByPlayer, aes(x = Draft_Round, y = YearsPlayed)) + geom_jitter() + geom_smooth(method = lm)
 ```
 
 Another way to evaluate relationship between player draft position and team playoff success might be to see if higher-drafted players score more goals per game. It does look like there is a slight trend for more goals per game from higher-drafted players but it's not clear if this impacts making the playoffs.
-```{r, echo=TRUE}
+```{r, echo=FALSE}
 ggplot(Hockey, aes(x = Draft_Pick, y=GoalsPerGame, col=Playoffs)) + geom_point(alpha = 0.5, position = "jitter") + geom_smooth(method = lm)
 ```
 
 It should be expected that teams who score more goals in a year and allows less goals in a year are more likely to go to the playoffs.
-```{r, echo=TRUE}
+```{r, echo=FALSE}
 ggplot(Hockey, aes(x = Year, y=Team_GoalsFor, col = Playoffs)) + geom_point()
 ggplot(Hockey, aes(x = Year, y=Team_GoalsAgainst, col = Playoffs)) + geom_point()
 ```
