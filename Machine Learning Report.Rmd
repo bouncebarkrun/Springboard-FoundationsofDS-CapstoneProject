@@ -1,0 +1,24 @@
+---
+title: "Machine Learning Report"
+author: "Molly McNamara"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Machine Learning Approach to Capstone Project
+
+The main question for this project is what player demographic/draft/play characteristics are most predictive of team success (making the playoffs).  The secondary question is whether player characteristics at the time they are drafted into the league, using a subset of underperforming and overperforming players, can be used to predict their future performance. As this is labeled data, it will be approached as a supervised learning problem, specifically a regression problem.  
+
+The player features (independent variables) used to predict team success will be Shooting Hand, Years of Experience, Position Played, Birth Country, Birth Region, Games Played, Goals, Assists and Points, Penalty Minutes, Plus Minus Rating, Shots, Goals and Shots Per Game, Percent of Team Goals Scored, Percent of Team Games Played, Draft Pick and Draft Round, Draft Age, Amateur Team and Amateur League.
+
+The player features (independent variables) that may be used to predict whether a player will over or under deliver in terms of performance post-draft will be Team ID, Conference and Division, Height and Weight, Shooting Hand, Position Played, Birth Country, Birth Region, Draft Year, Draft Team, Draft Age, Amateur Team and Amateur League.
+
+The primary question will be assessed using random forests algorithms (and if time allows perhaps some other methods for comparison) to build a model that allows for less than linear relationships between the variables.  The secondary question will be evaluated using logistic regression to determine how the variables may impact the final outcome of player performance.
+
+By splitting the main dataset at the onset of analysis into training and test sets, the model will be tested against a fresh batch of data to see how well it is able to predict based on the training set. Depending on the type of model, success of the models can be evaluated using cross-validation and AUC. 
+
+
+
