@@ -16,7 +16,7 @@ The player features (independent variables) used to predict team success will be
 
 The player features (independent variables) that may be used to predict whether a player will over or under deliver in terms of performance post-draft will be Height and Weight, Shooting Hand, Position Played, Birth Country, Birth Region, Draft Year, Draft Team, Draft Age, Amateur Team and Amateur League.
 
-The primary question will be assessed using random forests algorithms (and if time allows perhaps some other methods for comparison) to build a model that allows for less than linear relationships between the variables.  The secondary question will be evaluated using logistic regression to determine how the variables may impact the final outcome of player performance.
+The primary question will be assessed using random forests algorithms (and if time allows perhaps some other methods for comparison) to build a model that allows for less than linear relationships between the variables.  The secondary question may be evaluated using logistic regression to determine how the variables may impact the final outcome of player performance.
 
 By splitting the main dataset at the onset of analysis into training and test sets, the model will be tested against a fresh batch of data to see how well it is able to predict based on the training set. Depending on the type of model, success of the models can be evaluated using cross-validation and AUC. 
 
