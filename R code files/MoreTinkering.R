@@ -23,7 +23,6 @@ formula <- Playoffs ~ Shooting_Hand + YearsExperience + BirthRegion + Games_Play
 # Logistic Regression
 set.seed(seed)
 fit.glm <- train(formula, data=dataset, method="glm", trControl=control, na.action=na.pass)
-
 # CART
 set.seed(seed)
 fit.cart <- train(formula, data=dataset, method="rpart", trControl=control, na.action = na.pass)
