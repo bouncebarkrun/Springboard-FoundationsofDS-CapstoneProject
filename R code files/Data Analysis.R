@@ -1,78 +1,109 @@
+#R code necessary to analyze NHL data to address questions for capstone project
 
 # load libraries
 library(mlbench)
 library(caret)
 library(readr)
-library(rcart)
+library(rpart)
+library(dplyr)
+library(C50)
+library(plyr)
+library(ipred)
+library(e1071)
+library(ROCR)
+library(randomForest)
 
-FullData <- read.csv("C:/Users/mmcnamara/Desktop/FinalData_clean.csv")
+#Read data and ensure variables are correct format
+FullData <- read.csv("~/Desktop/FinalData_clean.csv")
 str(FullData)
 FullData$Playoffs <- as.factor(FullData$Playoffs)
 FullData$Birth_Country <-as.character(FullData$Birth_Country)
 FullData$Position_Played <-as.character(FullData$Position_Played)
 
+#Rename data
 dataset <- FullData
 
+#Set trainControl, seed and preProcess.  In this case, all models will be run with three separate 10-fold cross-validations as the resampling scheme.
 control <- trainControl(method="repeatedcv", number=10, repeats=3)
 seed <- 7
 preProcess=c("center", "scale")
 
-#Create the formula
+#Create the formula to evaluate the variables that may influence Playoffs
 formula <- Playoffs ~ Shooting_Hand + YearsExperience + BirthRegion + Games_Played + Goals + Assists + Points + Penalty_Minutes + Plus_Minus + Shots + GoalsPerGame + ShotsPerGame + PointsPerGame + PercentGoals + PercentGames + Draft_Pick + Draft_Round + Draft_Age
 
-# Logistic Regression
+# Logistic Regression Model
 set.seed(seed)
 fit.glm <- train(formula, data=dataset, method="glm", trControl=control, na.action=na.pass)
-# CART
+print(fit.glm)
+
+# Classification And Regression Tree Model
 set.seed(seed)
 fit.cart <- train(formula, data=dataset, method="rpart", trControl=control, na.action = na.pass)
-# C5.0
+print(fit.cart)
+
+# C5.0 (a method that constructs classifiers expressed as decision trees)
 set.seed(seed)
 fit.c50 <- train(formula, data=dataset, method="C5.0", trControl=control, na.action = na.pass)
-# Bagged CART
+print(fit.c50)
+
+# Bagged CART (a bootstrap aggregating algorithm)
 set.seed(seed)
 fit.treebag <- train(formula, data=dataset, method="treebag", trControl=control, na.action = na.pass)
+print(fit.treebag)
+
 # Random Forest
 set.seed(seed)
 fit.rf <- train(formula, data=dataset, method="rf", trControl=control, na.action = na.omit)
-# Stochastic Gradient Boosting (Generalized Boosted Modeling)
+print(fit.rf)
+
+# Stochastic Gradient Boosting (Generalized Boosted Modeling - a model that constructs additive regression models on repeated subsamples of the data)
 set.seed(seed)
 fit.gbm <- train(formula, data=dataset, method="gbm", trControl=control, verbose=FALSE, na.action = na.pass)
+print(fit.gbm)
 
-
-
+# Compile the resamples results from the models
 results <- resamples(list(logistic=fit.glm, cart=fit.cart, c50=fit.c50,
                           bagging=fit.treebag, rf=fit.rf, gbm=fit.gbm))
-# Table comparison
+
+# Compare method accuracy
 summary(results, metric="Accuracy")
 
-# boxplot comparison
+# Boxplot comparison of methods
 bwplot(results)
-# Dot-plot comparison
+# Dot-plot comparison of methods
 dotplot(results)
 
-summary(fit.c50)
-summary(fit.cart)
-summary(fit.gbm)
+#Some further investigation of the linear regression model
 summary(fit.glm)
-summary(fit.treebag)
-summary(fit.rf)
-plot(fit.rf)
+
+#Try to re-create the logistic regression model more simply to address potential overfitting
+set.seed(seed)
+Logmodel <- glm(formula, family="binomial", dataset)
+summary(Logmodel)
+anova(Logmodel, test ="Chisq")
+varImp(Logmodel)
+
 
 ### Question 2: Differences between Over and Underperforming Draft Picks
 
-TopDraftPicks  <- subset(FullData, Draft_Round <= 2)
-BottomDraftPicks  <- subset(FullData, Draft_Round >= 7)
+#Determine average goals
+summary(FullData$Goals)
 
-Question2 <- rbind(TopDraftPicks, BottomDraftPicks)
+#Set Over and Under Achievers: Players who were drafted early and score less than average goals & players who were drafted late who score more than average
+Under  <- subset(FullData, Draft_Round <= 2 & Goals <=6.68)
+Over <- subset(FullData, Draft_Round >= 7 & Goals >=6.68)
+
+#Create one data file with a variable to identify over or underachieverfs
+Question2 <- rbind(Under, Over)
 Question2 <- mutate(Question2, OverUnder = as.numeric(Question2$Draft_Round <=2))
 OverUnder <- c("OverUnder")
 Question2[OverUnder][is.na(Question2[OverUnder])] <- 0
+Question2$OverUnder <- as.factor(Question2$OverUnder)
 
 #Logistic regression model
-PerfModel <- glm(OverUnder ~ Height + Weight + Shooting_Hand + Position_Played + BirthRegion + Draft_Team + Draft_Age + AmateurLeague, family="binomial", Question2)
+PerfModel <- glm(OverUnder ~ Height + Weight + Position_Played + BirthRegion + Draft_Team + Draft_Age + AmateurLeague, family="binomial", Question2)
 summary(PerfModel)
 
+#Further evaluate model components
 anova(PerfModel, test="Chisq")
-
 
