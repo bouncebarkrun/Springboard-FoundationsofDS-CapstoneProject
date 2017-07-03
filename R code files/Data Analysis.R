@@ -23,48 +23,47 @@ FullData$Position_Played <-as.character(FullData$Position_Played)
 #Rename data
 dataset <- FullData
 
-#Set trainControl, seed and preProcess.  In this case, all models will be run with three separate 10-fold cross-validations as the resampling scheme.
+#Set trainControl and seed.  In this case, all models will be run with three separate 10-fold cross-validations as the resampling scheme.
 control <- trainControl(method="repeatedcv", number=10, repeats=3)
 seed <- 7
-preProcess=c("center", "scale")
 
 #Create the formula to evaluate the variables that may influence Playoffs
-formula <- Playoffs ~ Shooting_Hand + YearsExperience + BirthRegion + Games_Played + Goals + Assists + Points + Penalty_Minutes + Plus_Minus + Shots + GoalsPerGame + ShotsPerGame + PointsPerGame + PercentGoals + PercentGames + Draft_Pick + Draft_Round + Draft_Age
+formula <- Playoffs ~ Shooting_Hand + YearsExperience + Games_Played + Goals + Assists + Points + Penalty_Minutes + Plus_Minus + Shots + GoalsPerGame + ShotsPerGame + PointsPerGame + PercentGoals + PercentGames + Draft_Pick + Draft_Round + Draft_Age
 
 # Logistic Regression Model
 set.seed(seed)
-fit.glm <- train(formula, data=dataset, method="glm", trControl=control, na.action=na.pass)
+fit.glm <- train(formula, data=dataset, method="glm", trControl=control, na.action=na.pass, preProcess=c("center", "scale"))
 print(fit.glm)
 
 # Classification And Regression Tree Model
 set.seed(seed)
-fit.cart <- train(formula, data=dataset, method="rpart", trControl=control, na.action = na.pass)
+fit.cart <- train(formula, data=dataset, method="rpart", trControl=control, na.action = na.pass, preProcess=c("center", "scale"))
 print(fit.cart)
 
 # C5.0 (a method that constructs classifiers expressed as decision trees)
 set.seed(seed)
-fit.c50 <- train(formula, data=dataset, method="C5.0", trControl=control, na.action = na.pass)
+fit.c50 <- train(formula, data=dataset, method="C5.0", trControl=control, na.action = na.pass, preProcess=c("center", "scale"))
 print(fit.c50)
 
 # Bagged CART (a bootstrap aggregating algorithm)
 set.seed(seed)
-fit.treebag <- train(formula, data=dataset, method="treebag", trControl=control, na.action = na.pass)
+fit.treebag <- train(formula, data=dataset, method="treebag", trControl=control, na.action = na.pass, preProcess=c("center", "scale"))
 print(fit.treebag)
 
 # Random Forest
 set.seed(seed)
-fit.rf <- train(formula, data=dataset, method="rf", trControl=control, na.action = na.omit)
+fit.rf <- train(formula, data=dataset, method="rf", trControl=control, na.action = na.omit, preProcess=c("center", "scale"))
 print(fit.rf)
 
 # Stochastic Gradient Boosting (Generalized Boosted Modeling - a model that constructs additive regression models on repeated subsamples of the data)
 set.seed(seed)
-fit.gbm <- train(formula, data=dataset, method="gbm", trControl=control, verbose=FALSE, na.action = na.pass)
+fit.gbm <- train(formula, data=dataset, method="gbm", trControl=control, verbose=FALSE, na.action = na.pass, preProcess=c("center", "scale"))
 print(fit.gbm)
 
 # Compile the resamples results from the models
 results <- resamples(list(logistic=fit.glm, cart=fit.cart, c50=fit.c50,
                           bagging=fit.treebag, rf=fit.rf, gbm=fit.gbm))
-
+   
 # Compare method accuracy
 summary(results, metric="Accuracy")
 
@@ -101,7 +100,7 @@ Question2[OverUnder][is.na(Question2[OverUnder])] <- 0
 Question2$OverUnder <- as.factor(Question2$OverUnder)
 
 #Logistic regression model
-PerfModel <- glm(OverUnder ~ Height + Weight + Position_Played + BirthRegion + Draft_Team + Draft_Age + AmateurLeague, family="binomial", Question2)
+PerfModel <- glm(OverUnder ~ Height + Weight + Position_Played + Draft_Team + Draft_Age + Draft_Year + AmateurLeague, family="binomial", Question2)
 summary(PerfModel)
 
 #Further evaluate model components
