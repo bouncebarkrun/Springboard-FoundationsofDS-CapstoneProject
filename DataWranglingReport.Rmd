@@ -31,7 +31,7 @@ A new variable was created for playoff success in the Team and coded as 1 for th
 
 The cleaned datasets were merged by year and team so that all of the data now resides in one file.
 
-Additional variables were created with the final merged dataset to aid in future analysis: draft positions were subdivided into draft round and several scoring variables were created. 
+Additional variables were created with the final merged dataset to aid in future analysis: draft positions were subdivided into draft round and several scoring variables were created. Goalie save percentage was also calculated.
 
 At this point, the new cleaned data file was written and saved as CSV file.
 
