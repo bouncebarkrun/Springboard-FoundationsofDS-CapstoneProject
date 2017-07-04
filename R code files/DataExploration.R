@@ -80,5 +80,7 @@ ggplot(Hockey, aes(x = Draft_Round, y = Goals, color = BirthRegion)) +
   facet_grid(. ~ Playoffs)
 ##No clear difference is seen.
 
-
+#How does goalie save percentage and shutouts affect team wins?
+ggplot(Hockey, aes(x = SavePercentage, y=Team_Wins, col=Playoffs)) + geom_point(alpha = 0.5, position = "jitter")
+ggplot(Hockey, aes(x = GoalieShutouts, y=Team_Wins, col=Playoffs)) + geom_point(alpha = 0.5, position = "jitter") + geom_smooth(method = lm)
 
