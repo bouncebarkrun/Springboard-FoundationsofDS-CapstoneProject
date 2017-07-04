@@ -162,4 +162,4 @@ In examining the data in more detail over the course of the wrangling and explor
 
 The project approach at this point is to:  
 * Build the best predictive model of team success (defined as making the playoffs) from the player and draft characteristics.  
-* A secondary aim will be to define underrated and overrated players, determined by draft position and best 3 years of career performance, and evaluate if player performance at the time of the draft is predictable by amateur team, amateur league, nationality, position played or other factors.
+* A secondary aim will be to define underrated and overrated players, determined by draft position and scoring statistics, and evaluate if player performance at the time of the draft is predictable by amateur team, amateur league, nationality, position played or other factors.
