@@ -24,7 +24,7 @@ The project dataset consists of NHL player, team and coaching statistics for yea
 
 The datasets for this project were obtained from The Hockey Database and Hockey Reference. Data from The Hockey Database was available in CSV files by subject; data from Hockey Reference required download, compilation in a TXT file and conversion of the entire dataset to CSV.
 
-Four files were combined to create the final cleaned dataset for analysis: Master (basic demographic information on all NHL players from 1908 to 2011), Scoring (scoring statistics for all NHL players from 1908 to 2011), Teams (team statistics and playoff outcomes from 1908 to 2011), and Draft (player draft information from 1979 to 2010). The date range for draft data was determined by identifying the earliest drafted player still playing in the period of interest for this project (the project will evaluate game data from 2000-2011 - a player drafted in 1979 was still playing in 2000) and the latest possible drafted player who would play in this time period (2010). Note that there is no data for 2004 due to a league-wide labor dispute (lockout) wherein the entire season was cancelled and no games were played.
+Five datasets were read into R: Master (basic demographic information on all NHL players from 1908 to 2011), Scoring (scoring statistics for all NHL players from 1908 to 2011), Teams (team statistics and playoff outcomes from 1908 to 2011), Goalies (defensive statistics for all NHL goaltenders from 1908 to 2011), and Draft (player draft information from 1979 to 2010). The date range for Draft data was determined by identifying the earliest drafted player still playing in the period of interest for this project (the project will evaluate game data from 2000-2011 - a player drafted in 1979 was still playing in 2000) and the latest possible drafted player who would play in this time period (2010). Note that there is no data for 2004 due to a league-wide labor dispute (lockout) wherein the entire season was cancelled and no games were played.
 
 The R packages used for data wrangling were as follows:
 
@@ -35,7 +35,7 @@ install.packages("tidyr")
 install.packages("countrycode")
 ```
 
-Columns for all 4 files were renamed to understand the variables more easily. Columns for player name-ID and amateur team-league were split into their separate components. 
+Columns for all 5 datasets were renamed to understand the variables more easily. In the Draft dataset, the Player column was split into two columns, separating the player name and ID. The Master, Scoring, Goalies and Draft datasets were then joined/merged by Player_ID and Year into one dataset (AllData).
 
 Unnecessary or duplicative variables were removed. Multiple fields were converted to factors or integers as appropriate. Birth and death month/day/year columns were joined into a single date column for each event. The datasets were subset to the years 2000 to 2011.
 
@@ -82,10 +82,15 @@ Draft Year
 Draft Team  
 Draft Age  
 Amateur Team and League  
+Goalie Minutes Played  
+Goalie Wins and Losses  
+Goalie Shutouts  
+Goalie Goals Against  
+Goalie Shots Against  
 
 ## Limitations
 
-Several limitations can be identfied in the final dataset at this point: (a) the lack of play statistics prior to draft and draft combine results (the latter is kept confidential by the NHL), which could have been useful in predicting future NHL performance and team success; (b) this data largely ignores the defensive contribution of goaltenders by omission of goaltending statistics; and (c) Time On Ice (TOI), a well-known parameter of player performance, is not available.
+Several limitations can be identfied in the final dataset at this point: (a) the lack of play statistics prior to draft and draft combine results (the latter is kept confidential by the NHL), which could have been useful in predicting future NHL performance and team success; (b)  Time On Ice (TOI), a well-known parameter of player performance, is not available.
 
 # Preliminary Exploration
 
