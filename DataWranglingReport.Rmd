@@ -15,13 +15,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 The datasets for this project were obtained from The Hockey Database (individual player and team statistics, [link](http://www.opensourcesports.com/hockey/)) and Hockey Reference (player draft data, [link](http://www.hockey-reference.com/)). Data from The Hockey Database was available in CSV files by subject; data from Hockey Reference required download, compilation in a TXT file and conversion of the entire dataset to CSV.
 
-Four datasets were read into R: Master (basic demographic information on all NHL players from 1908 to 2011), Scoring (scoring statistics for all NHL players from 1908 to 2011), Teams (team statistics and playoff outcomes from 1908 to 2011), and Draft (player draft information from 1979 to 2010).  The date range for Draft data was determined by identifying the earliest drafted player still playing in the period of interest for this project (the project will evaluate game data from 2000-2011 - a player drafted in 1979 was still playing in 2000) and the latest possible drafted player who would play in this time period (2010).  
+Five datasets were read into R: Master (basic demographic information on all NHL players from 1908 to 2011), Scoring (scoring statistics for all NHL players from 1908 to 2011), Teams (team statistics and playoff outcomes from 1908 to 2011), Goalies (defensive statistics for all NHL goaltenders from 1908 to 2011), and Draft (player draft information from 1979 to 2010).  The date range for Draft data was determined by identifying the earliest drafted player still playing in the period of interest for this project (the project will evaluate game data from 2000-2011 - a player drafted in 1979 was still playing in 2000) and the latest possible drafted player who would play in this time period (2010).  
 
 ## Data Cleaning Steps
 
-Columns for all 4 datasets were renamed to understand the variables more easily. In the Draft dataset, the Player column was split into two columns, separating the player name and ID.    
+Columns for all 5 datasets were renamed to understand the variables more easily. In the Draft dataset, the Player column was split into two columns, separating the player name and ID.    
 
-The Master, Scoring and Draft datasets were then merged by Player_ID into one dataset (AllData). 
+The Master, Scoring, Goalies and Draft datasets were then joined/merged by Player_ID and Year into one dataset (AllData). 
 
 Unnecessary or duplicative variables were removed from AllData and Teams. Multiple fields were converted to factors or integers as appropriate. Birth and death month/day/year columns were joined into a single date column for each event. The datasets were subset to the years 2000 to 2011 under the new names PlayerData and TeamData.  At this point, PlayerData consisted of 10,342 observations of 54 variables and TeamData consisted of 330 observations of 25 variables.
 
@@ -37,4 +37,4 @@ At this point, the new cleaned data file was written and saved as CSV file.
 
 The R code used to perform this data wrangling can be found here: [link](https://github.com/bouncebarkrun/SpringboardCapstoneProject/blob/master/Capstone%20Data%20Wrangling.R)
 
-The original 4 data files and the two cleaned data files can be found here: [link](https://github.com/bouncebarkrun/SpringboardCapstoneProject)
+The original 5 data files and the cleaned data file can be found here: [link](https://github.com/bouncebarkrun/SpringboardCapstoneProject)
