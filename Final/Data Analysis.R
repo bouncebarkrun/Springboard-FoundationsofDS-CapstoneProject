@@ -76,7 +76,7 @@ dotplot(results, metric="Accuracy")
 varImp(fit.rf)
 
 #A new random forest model was created to limit to the top variables of influence.
-formula2 <- Playoffs ~ PercentGoals + Draft_Pick + Penalty_Minutes + ShotsPerGame + PercentGames + PointsPerGame + YearsExperience + GoalsPerGame
+formula2 <- Playoffs ~ PercentGoals + Draft_Pick + Penalty_Minutes + ShotsPerGame + PercentGames + PointsPerGame + YearsExperience + GoalsPerGame + Shots + Goals + Assists
 fit.rf2 <- randomForest(formula2, data=dataset, trControl="oob", na.action = na.roughfix, preProcess=c("center", "scale"))
 
 #Plot the mean decrease gini to see the variable importance
