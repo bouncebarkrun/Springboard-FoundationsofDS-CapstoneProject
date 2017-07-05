@@ -75,13 +75,18 @@ dotplot(results, metric="Accuracy")
 #The random forest model has the highest mean and median accuracy (while logistic regression hits the highest maximum).
 varImp(fit.rf)
 
-#Plot the mean decrease gini to see the variable importance
-varImpPlot(fit.rf)
+#A new random forest model was created to limit to the top variables of influence.
+formula2 <- Playoffs ~ PercentGoals + Draft_Pick + Penalty_Minutes + ShotsPerGame + PercentGames + PointsPerGame + YearsExperience + GoalsPerGame
+fit.rf2 <- randomForest(formula2, data=dataset, trControl="oob", na.action = na.roughfix, preProcess=c("center", "scale"))
 
-#Evaluate the model by building a ROC curve
-pred=predict(fit.rf,type = "prob")
-perf = prediction(pred[,2], dataset$Playoffs)
-pred2 = performance(perf, "tpr","fpr")
+#Plot the mean decrease gini to see the variable importance
+varImpPlot(fit.rf2)
+
+#Evaluate the model by building a ROC curve and calculating AUC
+pred <- predict(fit.rf2,type = "prob")
+perf <- prediction(pred[,2], dataset$Playoffs)
+pred2 <- performance(perf, "tpr","fpr")
+performance(perf,"auc")@y.values
 plot(pred2,main="ROC Curve for Random Forest",col=2,lwd=2)
 abline(a=0,b=1,lwd=2,lty=2,col="gray")
 
