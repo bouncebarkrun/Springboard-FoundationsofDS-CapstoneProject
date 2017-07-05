@@ -96,7 +96,7 @@ Over <- subset(FullData, Draft_Round >= 7 & Goals >=6.62 )
 
 #Create one data file with a variable to identify over or underachieverfs
 Question2 <- rbind(Under, Over)
-Question2 <- mutate(Question2, OverUnder = as.numeric(Question2$Draft_Round <=2))
+Question2 <- mutate(Question2, OverUnder = as.numeric(Question2$Draft_Round >=7))
 OverUnder <- c("OverUnder")
 Question2[OverUnder][is.na(Question2[OverUnder])] <- 0
 Question2$OverUnder <- as.factor(Question2$OverUnder)
