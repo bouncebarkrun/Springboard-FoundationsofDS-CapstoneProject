@@ -14,7 +14,7 @@ library(ROCR)
 library(randomForest)
 
 #Read data and ensure variables are correct format
-FullData <- read.csv("~/Desktop/FinalData_clean.csv")
+FullData <- read.csv("C:/Users/mmcnamara/Desktop/FinalData_clean.csv")
 str(FullData)
 FullData$Playoffs <- as.factor(FullData$Playoffs)
 FullData$Birth_Country <-as.character(FullData$Birth_Country)
@@ -86,7 +86,8 @@ varImpPlot(fit.rf2)
 pred <- predict(fit.rf2,type = "prob")
 perf <- prediction(pred[,2], dataset$Playoffs)
 pred2 <- performance(perf, "tpr","fpr")
-performance(perf,"auc")@y.values
+auc <- performance(perf,"auc")@y.values
+print(auc)
 plot(pred2,main="ROC Curve for Random Forest",col=2,lwd=2)
 abline(a=0,b=1,lwd=2,lty=2,col="gray")
 
