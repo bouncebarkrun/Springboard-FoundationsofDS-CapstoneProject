@@ -103,7 +103,7 @@ Question2$OverUnder <- as.factor(Question2$OverUnder)
 
 #Logistic regression model
 set.seed(seed)
-PerfModel <- glm(OverUnder ~ Height + Weight + Position_Played + Draft_Team + Draft_Age + AmateurLeague, family="binomial", Question2)
+PerfModel <- glm(OverUnder ~ Height + Weight + Position_Played + Draft_Team + BirthRegion + Draft_Age + AmateurLeague, family="binomial", Question2)
 summary(PerfModel)
 
 #Further evaluate model components
