@@ -42,45 +42,49 @@ New variables were created for team playoff success, birth regions, draft round,
 
 The variables in the final dataset are as follows:  
 
-Team ID, Conference and Division  
-Team Season end rank and Playoff result  
-Team made playoffs (0 or 1)  
-Team Games, Wins, Losses, Ties, Overtime Losses, Points, Shootout Wins and Shootout Losses  
-Team Goals For and Goals Against  
-Team Penalty Minutes and Bench Minors  
-Year (Season)  
-Player ID  
-First Name and Last Name  
-Height and Weight  
-Shooting Hand  
-First and Last NHL season  
-Years of Experience
-Position Played  
-Birth Country, Birth State/Province, Birth City  
-Death Country, Death State/Province, Death City  
-Birthdate and Deathdate  
-Birth Region  
-Stint with team  
-Games Played  
-Goals, Assists and Points  
-Penalty Minutes  
-Plus Minus Rating
-Powerplay Goals and Assists  
-Shorthanded Goals and Assists  
-Gamewinning Goals and Gametying Goals  
-Shots  
-Goals and Shots Per Game  
-Percent of Team Goals Scored  
-Percent of Team Games Played  
-Draft Pick and Draft Round  
-Draft Year  
-Draft Team  
-Draft Age  
-Amateur Team and League  
+Team ID, Conference and Division
+Team Season end rank and Playoff result
+Team made playoffs (0 or 1)
+Team Games, Wins, Losses, Ties, Overtime Losses, Points, Shootout Wins and Shootout Losses
+Team Goals For and Goals Against
+Team Penalty Minutes and Bench Minors
+Year (Season)
+Player ID
+First Name and Last Name
+Height and Weight
+Shooting Hand
+First and Last NHL season
+Years of Experience Position Played
+Birth Country, Birth State/Province, Birth City
+Death Country, Death State/Province, Death City
+Birthdate and Deathdate
+Birth Region
+Stint with team
+Games Played
+Goals, Assists and Points
+Penalty Minutes
+Plus Minus Rating Powerplay Goals and Assists
+Shorthanded Goals and Assists
+Gamewinning Goals and Gametying Goals
+Shots
+Goals and Shots Per Game
+Percent of Team Goals Scored
+Percent of Team Games Played
+Draft Pick and Draft Round
+Draft Year
+Draft Team
+Draft Age
+Amateur Team and League
+Goalie Minutes Played
+Goalie Wins and Losses
+Goalie Shutouts
+Goalie Goals Against
+Goalie Shots Against
+Goalie Save Percentage
 
 ## Limitations
 
-Several limitations are readily apparent in the dataset prior to analysis: (a) the lack of player statistics prior to draft and draft combine results (the latter is kept confidential by the NHL), which could have been useful in predicting future NHL performance and team success; (b) this data largely ignores the defensive contribution of goaltenders by omission of goaltending statistics; and (c) Time On Ice (TOI), a well-known parameter of player performance, was not available.
+Several limitations are readily apparent in the dataset prior to analysis: (a) the lack of player statistics prior to draft and draft combine results (the latter is kept confidential by the NHL), which could have been useful in predicting future NHL performance and team success; (b) Time On Ice (TOI), a well-known parameter of player performance, was not available.
 
 # Preliminary Exploration
 
@@ -141,6 +145,19 @@ ggplot(Hockey, aes(x = Year, y=Team_GoalsAgainst, col = Playoffs)) + geom_point(
 
 This hypothesis appears to be true for the highest goal-scoring teams and lowest goal-allowing teams year-to-year.
 
+Another interesting area to evaluate is defensive statistics related to goaltenders. A
+goaltender's save percentage (the percent of shots they save from becoming goals) and
+shutouts (games where they don't allow the other team to score at all) should influence their
+team's win rate and perhaps making the playoffs.
+```{r, echo=FALSE}
+ggplot(Hockey, aes(x = SavePercentage, y=Team_Wins, col=Playoffs)) + geom_point(alpha = 0.5,
+position = "jitter")
+ggplot(Hockey, aes(x = GoalieShutouts, y=Team_Wins, col=Playoffs)) + geom_point(alpha = 0.5,
+position = "jitter") + geom_smooth(method = lm)
+```
+
+The relationship is not clear from these graphs but may be more apparent when the data is modeled.
+
 # Modeling Approach
 
 In examining the data in more detail over the course of the wrangling and exploring exercises, several simple truths are clear: teams that win more games, score more goals and allow less goals by their opposition go to the playoffs.  However, as teams are built and restructured over years, the question still exists of what player characteristics contribute most strongly to success.  The main goal of the project remains the primary focus from the project proposal - to determine what factors contribute to regular season success that is realized in a playoff berth.
@@ -179,7 +196,9 @@ library(ipred)
 library(e1071)
 library(ROCR)
 library(randomForest)
+```
 
+```{r, include=FALSE}
 #Read data and ensure variables are correct format
 FullData <- read.csv("~/Desktop/FinalData_clean.csv")
 str(FullData)
@@ -192,132 +211,87 @@ dataset <- FullData
 ```
 
 The trainControl function was set for all models to be run with three separate 10-fold cross-validations as the resampling scheme. 
-```{r, echo=TRUE}
+```{r, include=FALSE}
 control <- trainControl(method="repeatedcv", number=10, repeats=3)
 seed <- 7
 ```
-
 The formula to be used in the modeling was defined.
 ```{r, echo=TRUE}
 #Create the formula to evaluate the variables that may influence Playoffs
-formula <- Playoffs ~ Shooting_Hand + YearsExperience + Games_Played + Goals + Assists + Points + Penalty_Minutes + Plus_Minus + Shots + GoalsPerGame + ShotsPerGame + PointsPerGame + PercentGoals + PercentGames + Draft_Pick + Draft_Round + Draft_Age
+formula <- Playoffs ~ Shooting_Hand + YearsExperience + Goals + Assists + Penalty_Minutes + Shots + GoalsPerGame + ShotsPerGame + PointsPerGame + PercentGoals + PercentGames + Draft_Pick + Draft_Round + Draft_Age + SavePercentage + GoalieShutouts + GoalieMinutes
 ```
 
-The caret package in R was used to quickly run a number of different types of models on the same data.
-### Logistic Regression Model
-```{r, echo=TRUE}
+The caret package in R was used to quickly run a number of different types of models on the same data. The data was evaluated using logistic regression, CART, C5.0, bagged CART, random forest and stochastic gradient boosting models.
+```{r, include=FALSE}
 set.seed(seed)
 fit.glm <- train(formula, data=dataset, method="glm", trControl=control, na.action=na.pass, preProcess=c("center", "scale"))
-print(fit.glm)
-```
-
-### Classification And Regression Tree Model
-```{r, echo=TRUE}
 set.seed(seed)
 fit.cart <- train(formula, data=dataset, method="rpart", trControl=control, na.action = na.pass, preProcess=c("center", "scale"))
-print(fit.cart)
-```
-
-### C5.0 (a method that constructs classifiers expressed as decision trees)
-```{r, echo=TRUE}
 set.seed(seed)
 fit.c50 <- train(formula, data=dataset, method="C5.0", trControl=control, na.action = na.pass, preProcess=c("center", "scale"))
-print(fit.c50)
-```
-
-### Bagged CART (a bootstrap aggregating algorithm)
-```{r, echo=TRUE}
 set.seed(seed)
 fit.treebag <- train(formula, data=dataset, method="treebag", trControl=control, na.action = na.pass, preProcess=c("center", "scale"))
-print(fit.treebag)
-```
-
-### Random Forest
-```{r, echo=TRUE}
 set.seed(seed)
 fit.rf <- train(formula, data=dataset, method="rf", trControl=control, na.action = na.omit, preProcess=c("center", "scale"))
-print(fit.rf)
-```
-
-### Stochastic Gradient Boosting (Generalized Boosted Modeling - a model that constructs additive regression models on repeated subsamples of the data)
-```{r, echo=TRUE}
 set.seed(seed)
 fit.gbm <- train(formula, data=dataset, method="gbm", trControl=control, verbose=FALSE, na.action = na.pass, preProcess=c("center", "scale"))
-print(fit.gbm)
+
 ```
 
-The resamples function was used to aggregate the results from the models.
-```{r, echo=TRUE}
+The resamples function was used to aggregate the results from the models and method accuracy was compared across models.
+```{r, include=FALSE}
 results <- resamples(list(logistic=fit.glm, cart=fit.cart, c50=fit.c50,
                           bagging=fit.treebag, rf=fit.rf, gbm=fit.gbm))
 ```
 
-The method accuracy was then compared across models.
-```{r, echo=TRUE}
+```{r, echo=FALSE}
 summary(results, metric="Accuracy")
+dotplot(results, metric="Accuracy")
 ```
 
-The same results are shown in a boxplot and dotplot.
-```{r, echo=TRUE}
-# Boxplot comparison of methods
-bwplot(results)
-# Dot-plot comparison of methods
-dotplot(results)
+The random forest model showed the highest accuracy amongst the models. The various features that contribute to the model were evaluated to see their influence on the modeling.  
+```{r, echo=FALSE}
+varImp(fit.rf)
 ```
 
-The logistic regression model showed the highest accuracy so it is summarized further to understand making the greatest contribution to the model.
-```{r, echo=TRUE}
-summary(fit.glm)
+A new model was generated using the variables of greatest importance.  The mean decrease gini was plotted to determine the most important features, and a ROC curve generated to assess the results of the model.
+```{r, echo=FALSE}
+#A new random forest model was created to limit to the top variables of influence.
+fit.rf2 <- randomForest(formula, data=dataset, trControl="oob", na.action = na.roughfix, preProcess=c("center", "scale"))
+#Plot the mean decrease gini to see the variable importance
+varImpPlot(fit.rf2)
+#Evaluate the model by building a ROC curve
+pred=predict(fit.rf2,type = "prob")
+perf = prediction(pred[,2], dataset$Playoffs)
+pred2 = performance(perf, "tpr","fpr")
+plot(pred2,main="ROC Curve for Random Fore
 ```
 
-Another logistic regression model was attempted using more simple 
-#Try to re-create the logistic regression model more simply to address potential overfitting
-```{r, echo=TRUE}
-set.seed(seed)
-Logmodel <- glm(formula, family="binomial", dataset)
-summary(Logmodel)
-anova(Logmodel, test ="Chisq")
-varImp(Logmodel)
-```
+###Modeling Predictors of Future Player Performance
 
-
-### Question 2: Differences between Over and Underperforming Draft Picks
-
-```{r, echo=TRUE}
-#Determine average goals
-summary(FullData$Goals)
-```
-
-
+A secondary analysis aim was to define underrated and overrated players, determined by draft position and scoring statistics, and evaluate if player performance at the time of the draft is predictable by amateur team, amateur league, nationality, position played or other factors. A logistic regression model was used to assess the features which may differentiate future player performance.
+```{r, include=FALSE}
 #Set Over and Under Achievers: Players who were drafted early and score less than average goals & players who were drafted late who score more than average
-```{r, echo=TRUE}
-Under  <- subset(FullData, Draft_Round <= 2 & Goals <=6.68)
-Over <- subset(FullData, Draft_Round >= 7 & Goals >=6.68)
-```
-
-
-#Create one data file with a variable to identify over or underachieverfs
-```{r, echo=TRUE}
+Under  <- subset(FullData, Draft_Round <= 2 & Goals <=6.62 & Position_Played != "G")
+Over <- subset(FullData, Draft_Round >= 7 & Goals >=6.62 )
 Question2 <- rbind(Under, Over)
-Question2 <- mutate(Question2, OverUnder = as.numeric(Question2$Draft_Round <=2))
+Question2 <- mutate(Question2, OverUnder = as.numeric(Question2$Draft_Round >=7))
 OverUnder <- c("OverUnder")
 Question2[OverUnder][is.na(Question2[OverUnder])] <- 0
 Question2$OverUnder <- as.factor(Question2$OverUnder)
+#Logistic regression model
+set.seed(seed)
+PerfModel <- glm(OverUnder ~ Height + Weight + Position_Played + Draft_Team + Draft_Age + BirthRegion + AmateurLeague, family="binomial", Question2)
 ```
 
-
-#Logistic regression model
-```{r, echo=TRUE}
-PerfModel <- glm(OverUnder ~ Height + Weight + Position_Played + BirthRegion + Draft_Team + Draft_Age + AmateurLeague, family="binomial", Question2)
+```{r, echo=FALSE}
 summary(PerfModel)
 ```
 
-
+```{r, echo=FALSE}
 #Further evaluate model components
-```{r, echo=TRUE}
 anova(PerfModel, test="Chisq")
 ```
-
 
 ## Conclusions
 
