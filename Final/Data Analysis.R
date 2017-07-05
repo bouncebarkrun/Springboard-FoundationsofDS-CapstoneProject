@@ -30,32 +30,32 @@ seed <- 7
 #Create the formula to evaluate the variables that may influence Playoffs
 formula <- Playoffs ~ Shooting_Hand + YearsExperience + Goals + Assists + Penalty_Minutes + Shots + GoalsPerGame + ShotsPerGame + PointsPerGame + PercentGoals + PercentGames + Draft_Pick + Draft_Round + Draft_Age + SavePercentage + GoalieShutouts + GoalieMinutes
 
-# Logistic Regression Model
+# Logistic Regression Model: This is a regression model used when the dependent variable is categorical, as with the Playoffs variable (0 or 1).
 set.seed(seed)
 fit.glm <- train(formula, data=dataset, method="glm", trControl=control, na.action=na.pass, preProcess=c("center", "scale"))
 print(fit.glm)
 
-# Classification And Regression Tree Model
+# Classification And Regression Tree, or CART, Model: This type of model develops classification trees to predict the categorical outcome.
 set.seed(seed)
 fit.cart <- train(formula, data=dataset, method="rpart", trControl=control, na.action = na.pass, preProcess=c("center", "scale"))
 print(fit.cart)
 
-# C5.0 (a method that constructs classifiers expressed as decision trees)
+# C5.0: This is a method that constructs classifiers expressed as decision trees.
 set.seed(seed)
 fit.c50 <- train(formula, data=dataset, method="C5.0", trControl=control, na.action = na.pass, preProcess=c("center", "scale"))
 print(fit.c50)
 
-# Bagged CART (a bootstrap aggregating algorithm)
+# Bagged CART: This is another classification and regression model that uses bagging for the model averaging.
 set.seed(seed)
 fit.treebag <- train(formula, data=dataset, method="treebag", trControl=control, na.action = na.pass, preProcess=c("center", "scale"))
 print(fit.treebag)
 
-# Random Forest
+# Random Forest: This type of model constructs many decision trees simultaneously to determine the most likely outcome.
 set.seed(seed)
 fit.rf <- train(formula, data=dataset, method="rf", trControl=control, na.action = na.roughfix, preProcess=c("center", "scale"))
 print(fit.rf)
 
-# Stochastic Gradient Boosting (Generalized Boosted Modeling - a model that constructs additive regression models on repeated subsamples of the data)
+# Stochastic Gradient Boosting: This is also known as Generalized Boosted Modeling and is a model that constructs additive regression models on repeated subsamples of the data.
 set.seed(seed)
 fit.gbm <- train(formula, data=dataset, method="gbm", trControl=control, verbose=FALSE, na.action = na.pass, preProcess=c("center", "scale"))
 print(fit.gbm)
@@ -68,20 +68,22 @@ results <- resamples(list(logistic=fit.glm, cart=fit.cart, c50=fit.c50,
 summary(results, metric="Accuracy")
 
 # Boxplot comparison of methods
-bwplot(results)
+bwplot(results, metric="Accuracy")
 # Dot-plot comparison of methods
-dotplot(results)
+dotplot(results, metric="Accuracy")
 
-#Some further investigation of the important features in two of the models
-summary(fit.glm)
+#The random forest model has the highest mean and median accuracy (while logistic regression hits the highest maximum).
 varImp(fit.rf)
 
-#Try to re-create the logistic regression model more simply to address potential overfitting, choosing the highest importance variables from RF
-set.seed(seed)
-Logmodel <- glm(formula, family="binomial", dataset)
-summary(Logmodel)
-anova(Logmodel, test ="Chisq")
+#Plot the mean decrease gini to see the variable importance
+varImpPlot(fit.rf)
 
+#Evaluate the model by building a ROC curve
+pred=predict(fit.rf,type = "prob")
+perf = prediction(pred[,2], dataset$Playoffs)
+pred2 = performance(perf, "tpr","fpr")
+plot(pred2,main="ROC Curve for Random Forest",col=2,lwd=2)
+abline(a=0,b=1,lwd=2,lty=2,col="gray")
 
 ### Question 2: Differences between Over and Underperforming Draft Picks
 
