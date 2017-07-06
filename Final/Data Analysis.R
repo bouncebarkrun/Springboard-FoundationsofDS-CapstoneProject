@@ -108,10 +108,9 @@ Question2[OverUnder][is.na(Question2[OverUnder])] <- 0
 Question2$OverUnder <- as.factor(Question2$OverUnder)
 
 #Logistic regression model
+formula2 <- OverUnder ~ Height + Weight + Position_Played + Draft_Team + BirthRegion + Draft_Age + AmateurLeague
+
 set.seed(seed)
-PerfModel <- glm(OverUnder ~ Height + Weight + Position_Played + Draft_Team + BirthRegion + Draft_Age + AmateurLeague, family="binomial", Question2)
-summary(PerfModel)
-
-#Further evaluate model components
-anova(PerfModel, test="Chisq")
-
+fit.glm2 <- train(formula2, data=Question2, method="glm", trControl=control, na.action=na.pass, preProcess=c("center", "scale"))
+print(fit.glm2)
+varImp(fit.glm2)
